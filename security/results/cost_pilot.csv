@@ -1,0 +1,4 @@
+suite,model_label,calls,errors,median_latency_s,prompt_tokens,completion_tokens
+D,Claude,5,0,0.01,50,50
+D,DeepSeek,5,0,0.01,50,50
+D,OpenAI,5,0,0.01,50,50

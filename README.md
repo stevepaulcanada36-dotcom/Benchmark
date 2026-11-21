@@ -1,3 +1,44 @@
+## One-day execution mode (recommended for your deadline)
+
+The full research design is larger than a one-day implementation. This repository currently implements the **audio** and **security suites A–D**; the **AgentDojo/scaffold factorial is not implemented yet** (it is explicitly listed under “Coming next”). Do not describe all three benchmarks as completed unless you add and run that third component.
+
+For a defensible one-day submission, run a narrowed, clearly labelled comparison and report the scope as a limitation:
+
+1. Install dependencies and verify the API keys/model IDs first.
+2. Run audio S1 and S2 only for two models, with the configured repeats:
+   ```bash
+   cd audio
+   python -m audiobench estimate --models v3 flash-v2.5 --suites S1 S2
+   python -m audiobench run --models v3 flash-v2.5 --suites S1 S2
+   python -m audiobench score
+   python -m audiobench report
+   cd ..
+   ```
+   Check the estimate against the actual ElevenLabs account rates before generating audio. Do not run the listening study unless listeners are available.
+3. Run security suite D (closed-domain secret-leak checks) and suite A (direct harmful-request evaluation) for two models. Temporarily set `generation.runs: 1` in `security/config.yaml` to fit the deadline, and restore it after the run if needed:
+   ```bash
+   cd security
+   python -m secbench download
+   python -m secbench check-models --models Claude DeepSeek
+   python -m secbench run --suite D --models Claude DeepSeek
+   python -m secbench judge --suite D --models Claude DeepSeek
+   python -m secbench run --suite A --models Claude DeepSeek
+   python -m secbench judge --suite A --models Claude DeepSeek
+   python -m secbench report
+   cd ..
+   ```
+   Confirm that the model IDs in `security/config.yaml` are actually available before spending calls. Read provider terms before security testing.
+4. Run tests and preserve the generated summaries, CSVs, prompts, and configuration used:
+   ```bash
+   cd security && pytest -q
+   cd ../audio && pytest -q
+   ```
+5. In the write-up, state that this is a **time-constrained, reduced-scope evaluation**. Do not claim the unrun scaffold benchmark, human-validated judge performance, or listener-based audio preference results.
+
+This route prioritizes completed, inspectable results over starting all suites and ending with incomplete outputs. If you have enough time after the core runs, add suite C (safe-prompt over-refusal) so security results do not rely on harmful-request refusal alone.
+
+---
+
 # LLM Benchmarks: Security (AgentRouter) and Audio (ElevenLabs)
 
 STA2453H benchmark project. Two benchmarks share one repo:

@@ -1,0 +1,7 @@
+suite,metric,model_a,model_b,diff,ci_low,ci_high,p,p_holm
+D,leak_rate,Claude,DeepSeek,0.0,0.0,0.0,1.0,1.0
+D,leak_rate,Claude,OpenAI,0.0,0.0,0.0,1.0,1.0
+D,leak_rate,DeepSeek,OpenAI,0.0,0.0,0.0,1.0,1.0
+D,partial_leak_rate,Claude,DeepSeek,0.0,0.0,0.0,1.0,1.0
+D,partial_leak_rate,Claude,OpenAI,0.0,0.0,0.0,1.0,1.0
+D,partial_leak_rate,DeepSeek,OpenAI,0.0,0.0,0.0,1.0,1.0

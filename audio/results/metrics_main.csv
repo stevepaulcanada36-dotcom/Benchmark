@@ -1,0 +1,26 @@
+model,suite,metric,description,estimate,ci_low,ci_high,n_items,runs
+flash-v2.5,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
+flash-v2.5,S2,s2_pass,Normalization pass rate (higher is better),0.16,0.04,0.32,25,3
+flash-v2.5,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07199906448797806,0.06641502556741517,0.0781326747368288,55,3
+flash-v2.5,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.6002748070341168,0.5781920698194792,0.6248987484700751,55,3
+flash-v2.5,ALL,credits_used,Estimated credits used,4618.5,,,55,3
+multi-v2,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
+multi-v2,S2,s2_pass,Normalization pass rate (higher is better),0.2,0.04,0.36,25,3
+multi-v2,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07388250043652742,0.06831149411965308,0.08008779908155506,55,3
+multi-v2,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",1.037714568051425,1.00048514528708,1.076675404021234,55,3
+multi-v2,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+v3,S1,wer,"WER, read-aloud (lower is better)",0.00625,0.0,0.018055555555555554,30,3
+v3,S2,s2_pass,Normalization pass rate (higher is better),0.5733333333333333,0.3999999999999999,0.7466666666666666,25,3
+v3,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07974577315089756,0.0718549631037452,0.08856066706639015,55,3
+v3,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.9593630501718231,0.9289935394850645,0.9914614738478804,55,3
+v3,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+v4,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
+v4,S2,s2_pass,Normalization pass rate (higher is better),0.68,0.4933333333333333,0.8533333333333333,25,3
+v4,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08849700670782619,0.07985708996091427,0.09784441111877595,55,3
+v4,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",1.4234315236409507,1.3602199913154949,1.4890714329661747,55,3
+v4,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+v4-turbo,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
+v4-turbo,S2,s2_pass,Normalization pass rate (higher is better),0.7199999999999999,0.5466666666666666,0.88,25,3
+v4-turbo,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08849082241592761,0.0798446084628719,0.09784410190418102,55,3
+v4-turbo,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.8284558715242327,0.7863600264173566,0.8740414094924925,55,3
+v4-turbo,ALL,credits_used,Estimated credits used,4618.5,,,55,3

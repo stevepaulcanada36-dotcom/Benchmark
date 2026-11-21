@@ -20,8 +20,9 @@ max_credits: 110000       # hard stop for the whole benchmark (pilot + main)
 reference_model: multi-v2 # speaker-similarity reference
 
 metrics:
-  asr_model: large-v3     # faster-whisper size; use "small" for a quick CPU check
-  asr_device: auto        # auto | cpu | cuda
-  utmos: true             # needs requirements-extra.txt (torch)
-  speaker_similarity: true
+  
+  asr_model: large-v3
+  asr_device: cpu
+  utmos: false
+  speaker_similarity: false
   s5_chunk_chars: 200
