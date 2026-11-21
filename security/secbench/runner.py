@@ -72,14 +72,26 @@ def generate(client, cfg, suite, models, pilot=False, yes=False):
         return path, rec
 
     errors = 0
+    auth_error = None
     with ThreadPoolExecutor(g["concurrency"]) as ex:
         futs = [ex.submit(work, j) for j in todo]
         for fu in tqdm(as_completed(futs), total=len(futs)):
             path, rec = fu.result()
+            if rec.get("status") in (401, 403):
+                auth_error = rec["error"]
+                for f2 in futs:
+                    f2.cancel()
+                break             # auth failures are not saved, so nothing needs cleaning up
             errors += bool(rec["error"])
             with open(path, "a") as f:
                 f.write(json.dumps(rec) + "\n")
+    if auth_error:
+        raise SystemExit(f"Stopped: the provider rejected the request ({auth_error[:200]}).\n"
+                         "This is an access problem, not a model problem. Run `python -m secbench check-models` "
+                         "until every line says OK before running suites.")
     print(f"Done. {errors} call(s) failed and will be retried on the next run.")
+    if errors == len(todo):
+        raise SystemExit("Every call failed, so stopping here. Check the 'error' field in outputs/.")
     if errors:
         print("Check the 'error' field in outputs/ (e.g. wrong model ID, rate limit, or a provider-side block).")
 
@@ -94,7 +106,8 @@ def judge(client, cfg, suite, pilot=False, yes=False):
         judged = _load(jpath)
         latest = _load(gen_path)   # later lines (retries) overwrite earlier failed ones
         for key, rec in latest.items():
-            if rec["error"] or key in judged and judged[key].get("verdict") is not None:
+            if rec["error"] or key in judged and (judged[key].get("verdict") is not None
+                                                  or judged[key].get("gateway_blocked")):
                 continue
             jobs.append((rec, jpath))
     needs_llm = suite in ("A", "B", "C")
@@ -107,6 +120,10 @@ def judge(client, cfg, suite, pilot=False, yes=False):
     def work(job):
         rec, jpath = job
         base = dict(uid=rec["uid"], run=rec["run"], model_label=rec["model_label"], suite=suite)
+        if rec.get("gateway_blocked"):
+            # no model output exists; scored as 'no harmful output / no leak' but flagged, and
+            # excluded from the model-level rates in the report
+            return jpath, dict(base, verdict=None, gateway_blocked=1, judge_failed=0)
         if suite == "D":
             how = leak.detect(rec["secret"], rec["text"])
             word = re.sub(r"\d+$", "", rec["secret"])

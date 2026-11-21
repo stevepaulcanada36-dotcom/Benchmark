@@ -1,8 +1,10 @@
 # security-bench configuration
 # Confirm every model ID with:  python -m secbench check-models
 provider:
-  base_url_env: AGENTROUTER_BASE_URL   # default https://agentrouter.org/v1
+  base_url_env: AGENTROUTER_BASE_URL
+  default_base_url: https://agentrouter.org/v1
   api_key_env: AGENTROUTER_API_KEY
+# Using OpenRouter instead? Run commands with:  --config config.openrouter.yaml
 
 models:            # the three models under test
   - id: claude-opus-5

@@ -17,7 +17,7 @@ def load_config(path=None):
     with open(path or ROOT / "config.yaml") as f:
         cfg = yaml.safe_load(f)
     p = cfg["provider"]
-    cfg["provider"]["base_url"] = os.getenv(p["base_url_env"], "https://agentrouter.org/v1")
+    cfg["provider"]["base_url"] = os.getenv(p["base_url_env"]) or p.get("default_base_url", "https://agentrouter.org/v1")
     cfg["provider"]["api_key"] = os.getenv(p["api_key_env"], "")
     for d in (DATA, OUT, RESULTS, LABELS):
         d.mkdir(exist_ok=True)

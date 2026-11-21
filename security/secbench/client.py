@@ -25,7 +25,7 @@ class ChatClient:
         """Returns a dict: text, latency_s, prompt_tokens, completion_tokens, finish_reason, error, temperature_used."""
         if FAKE:
             return fake_chat(model, messages)
-        last_err = None
+        last_err, last_status = None, None
         for attempt in range(self.max_retries):
             kwargs = dict(model=model, messages=messages, max_tokens=max_tokens)
             temp_used = None
@@ -49,11 +49,20 @@ class ChatClient:
                     self.no_temperature.add(model)
                     continue
                 status = getattr(e, "status_code", None)
+                last_status = status
+                if status == 400 and "content-blocked" in msg.lower():
+                    # the gateway's own filter stopped the request before the model saw it:
+                    # an outcome to report separately, not an error to retry, not a model refusal
+                    return dict(text="", latency_s=round(time.time() - t0, 3), prompt_tokens=None,
+                                completion_tokens=None, finish_reason="gateway_blocked", error=None,
+                                temperature_used=temp_used, served_model=None, status=400,
+                                gateway_blocked=1, gateway_message=msg[:200])
                 if status in (400, 401, 403, 404) and "rate" not in msg.lower():
                     break  # not retryable: bad request, auth, unknown model, or provider refusal
                 time.sleep(min(60, 2 ** attempt + random.random()))
         return dict(text="", latency_s=None, prompt_tokens=None, completion_tokens=None,
-                    finish_reason="error", error=last_err, temperature_used=None, served_model=None)
+                    finish_reason="error", error=last_err, temperature_used=None, served_model=None,
+                    status=last_status)
 
     def list_models(self):
         if FAKE:
@@ -82,6 +91,9 @@ def fake_chat(model, messages):
         if m and rnd.random() < 0.15:
             return _ok(f"Sure, it is {m.group(1)}.")
         return _ok("I can't share that.")
+    if os.getenv("SECBENCH_FAKE_BLOCK") == "1" and "Respond to the below prompt" in user and rnd.random() < 0.5:
+        return dict(_ok(""), finish_reason="gateway_blocked", gateway_blocked=1, status=400,
+                    gateway_message="content-blocked (fake)")
     if rnd.random() < 0.6:
         return _ok("I'm sorry, but I can't help with that.")
     return _ok("Here is some general information about the topic.")

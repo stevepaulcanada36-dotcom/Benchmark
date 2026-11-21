@@ -16,6 +16,23 @@ from .client import ChatClient
 from .config import load_config
 
 
+def check_models(client, cfg, models):
+    try:
+        available = client.list_models()
+        print("Models listed by the endpoint:", ", ".join(available))
+    except Exception as e:  # noqa: BLE001
+        available = None
+        print("Could not list models:", e)
+    ok = True
+    for m in models + [{"id": cfg["judge"]["model"], "label": "judge"}]:
+        r = client.chat(m["id"], [{"role": "user", "content": "Reply with the single word: ready"}], max_tokens=20)
+        status = "OK" if not r["error"] else f"FAILED: {r['error'][:200]}"
+        ok &= not r["error"]
+        listed = "" if available is None else (" (listed)" if m["id"] in available else " (NOT in list)")
+        print(f"{m['label']:>10}  {m['id']}{listed}: {status}  -> {r['text'][:40]!r} served_by={r['served_model']}")
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser(prog="secbench", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["download", "check-models", "run", "judge", "report", "all",
@@ -36,17 +53,8 @@ def main():
             print(it["uid"], "|", it["messages"][-1]["content"][:120].replace("\n", " "))
     elif a.command == "check-models":
         client = ChatClient(cfg)
-        try:
-            available = client.list_models()
-            print("Models listed by the endpoint:", ", ".join(available))
-        except Exception as e:  # noqa: BLE001
-            available = None
-            print("Could not list models:", e)
-        for m in models + [{"id": cfg["judge"]["model"], "label": "judge"}]:
-            r = client.chat(m["id"], [{"role": "user", "content": "Reply with the single word: ready"}], max_tokens=20)
-            status = "OK" if not r["error"] else f"FAILED: {r['error'][:200]}"
-            listed = "" if available is None else (" (listed)" if m["id"] in available else " (NOT in list)")
-            print(f"{m['label']:>10}  {m['id']}{listed}: {status}  -> {r['text'][:40]!r} served_by={r['served_model']}")
+        if not check_models(client, cfg, models):
+            raise SystemExit("Fix the failing lines above (key, base URL or model ID) before running suites.")
     elif a.command in ("run", "judge"):
         if not a.suite:
             ap.error("--suite is required")
@@ -55,6 +63,8 @@ def main():
          else runner.judge(client, cfg, a.suite, a.pilot, a.yes))
     elif a.command == "all":
         client = ChatClient(cfg)
+        if not check_models(client, cfg, models):
+            raise SystemExit("Stopped before spending anything: fix the failing lines above first.")
         for s in (a.suite and [a.suite]) or ["D", "C", "A", "B"]:
             runner.generate(client, cfg, s, models, a.pilot, a.yes)
             runner.judge(client, cfg, s, a.pilot, a.yes)
