@@ -1,0 +1,27 @@
+# audio-bench configuration
+api_key_env: ELEVENLABS_API_KEY
+
+voice_id: JBFqnCBsd6RMkjVDRZzb   # a premade voice; list yours with: python -m audiobench list-voices
+output_format: mp3_44100_128
+seed: 2453                       # sent where the model accepts it; best-effort determinism
+voice_settings: {stability: 0.5, similarity_boost: 0.75}
+
+# credits_per_char: CHECK against your ElevenLabs plan before the full run (dashboard > usage).
+models:
+  - {id: eleven_v4,              label: v4,          credits_per_char: 1.0, supports_tags: true}
+  - {id: eleven_v4_turbo,        label: v4-turbo,    credits_per_char: 0.5, supports_tags: true}
+  - {id: eleven_v3,              label: v3,          credits_per_char: 1.0, supports_tags: true}
+  - {id: eleven_multilingual_v2, label: multi-v2,    credits_per_char: 1.0, supports_tags: false}
+  - {id: eleven_flash_v2_5,      label: flash-v2.5,  credits_per_char: 0.5, supports_tags: false}
+
+runs: {S1: 3, S2: 3, S3: 3, S4: 1, S5: 1}
+pilot_fraction: 0.05      # --pilot: ~5% of items from every suite, 1 run
+max_credits: 110000       # hard stop for the whole benchmark (pilot + main)
+reference_model: multi-v2 # speaker-similarity reference
+
+metrics:
+  asr_model: large-v3     # faster-whisper size; use "small" for a quick CPU check
+  asr_device: auto        # auto | cpu | cuda
+  utmos: true             # needs requirements-extra.txt (torch)
+  speaker_similarity: true
+  s5_chunk_chars: 200

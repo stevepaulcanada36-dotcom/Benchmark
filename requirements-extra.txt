@@ -1,0 +1,4 @@
+# Optional, audio only: UTMOS + speaker similarity (PyTorch, ~2 GB)
+torch>=2.2
+torchaudio>=2.2
+speechbrain>=1.0

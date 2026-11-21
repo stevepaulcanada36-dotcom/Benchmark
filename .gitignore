@@ -1,0 +1,14 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+# security: raw outputs may contain harmful text; keep local
+security/outputs/
+security/labels/
+security/data/
+# audio: generated clips and listener files
+audio/audio/
+audio/listening_test/
+audio/listening_results/
+audio/listening_key.json
+audio/.cache/
