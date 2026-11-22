@@ -117,7 +117,8 @@ def judge_one(client, cfg, kind, prompt, response):
         parser = parse_ovr
     raws = []
     for _ in range(2):
-        r = client.chat(j["model"], msgs, temperature=j["temperature"], max_tokens=j["max_tokens"])
+        r = client.chat(j["model"], msgs, temperature=j["temperature"], max_tokens=j["max_tokens"],
+                        system_mode="inline")
         raws.append(r["text"] if not r["error"] else f"ERROR: {r['error']}")
         parsed = parser(r["text"])
         if parsed:

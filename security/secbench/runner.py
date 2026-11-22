@@ -55,6 +55,9 @@ def plan(cfg, suite, models, pilot):
 def generate(client, cfg, suite, models, pilot=False, yes=False):
     items, runs, todo = plan(cfg, suite, models, pilot)
     cap = cfg["budget"]["max_new_calls_per_command"]
+    if not items:
+        print(f"Suite {suite}: switched off in the config (max_items: 0); skipping.")
+        return
     print(f"Suite {suite}: {len(items)} items x {runs} run(s) x {len(models)} model(s); {len(todo)} calls to make.")
     if not todo:
         return
@@ -64,8 +67,12 @@ def generate(client, cfg, suite, models, pilot=False, yes=False):
         raise SystemExit("Cancelled.")
     g = cfg["generation"]
 
+    out_of_quota = set()
+
     def work(job):
         m, it, run, path = job
+        if m["label"] in out_of_quota:
+            return path, dict(skipped=True, model_label=m["label"])
         r = client.chat(m["id"], it["messages"], temperature=g["temperature"], max_tokens=g["max_tokens"])
         rec = dict(_meta(it), run=run, model=m["id"], model_label=m["label"],
                    ts=datetime.now(timezone.utc).isoformat(), **r)
@@ -77,6 +84,11 @@ def generate(client, cfg, suite, models, pilot=False, yes=False):
         futs = [ex.submit(work, j) for j in todo]
         for fu in tqdm(as_completed(futs), total=len(futs)):
             path, rec = fu.result()
+            if rec.get("skipped"):
+                continue
+            if rec.get("status") == 402 or "[quota]" in (rec.get("error") or ""):
+                out_of_quota.add(rec["model_label"])   # pause this model only; others keep going
+                continue
             if rec.get("status") in (401, 403):
                 auth_error = rec["error"]
                 for f2 in futs:
@@ -85,12 +97,20 @@ def generate(client, cfg, suite, models, pilot=False, yes=False):
             errors += bool(rec["error"])
             with open(path, "a") as f:
                 f.write(json.dumps(rec) + "\n")
+    if auth_error and ("[quota]" in auth_error or "402" in auth_error):
+        from .cli_client import releases_text
+        raise SystemExit(f"Stopped: quota exhausted ({auth_error[:160]}).\nFinished calls are saved; "
+                         "re-run the same command after the next release.\n" + releases_text())
     if auth_error:
         raise SystemExit(f"Stopped: the provider rejected the request ({auth_error[:200]}).\n"
                          "This is an access problem, not a model problem. Run `python -m secbench check-models` "
                          "until every line says OK before running suites.")
+    if out_of_quota:
+        from .cli_client import releases_text
+        print(f"Quota exhausted for: {', '.join(sorted(out_of_quota))}. Their remaining calls were skipped and "
+              "will run when you repeat this command after the next release.\n" + releases_text())
     print(f"Done. {errors} call(s) failed and will be retried on the next run.")
-    if errors == len(todo):
+    if errors and errors == len(todo):
         raise SystemExit("Every call failed, so stopping here. Check the 'error' field in outputs/.")
     if errors:
         print("Check the 'error' field in outputs/ (e.g. wrong model ID, rate limit, or a provider-side block).")
@@ -111,6 +131,7 @@ def judge(client, cfg, suite, pilot=False, yes=False):
                 continue
             jobs.append((rec, jpath))
     needs_llm = suite in ("A", "B", "C")
+    judge_quota = []
     print(f"Suite {suite}: {len(jobs)} responses to grade" + (" with the LLM judge." if needs_llm else " (regex, free)."))
     if not jobs:
         return
@@ -130,7 +151,12 @@ def judge(client, cfg, suite, pilot=False, yes=False):
             partial = int(how is None and re.search(rf"\b{word}\b", rec["text"] or "", re.I) is not None)
             return jpath, dict(base, verdict=int(how is not None), detector=how, partial_leak=partial)
         kind = "ovr" if suite == "C" else "harm"
+        if judge_quota:
+            return jpath, None
         parsed, raws = judge_one(client, cfg, kind, rec["prompt"], rec["text"])
+        if any("[quota]" in r for r in raws):
+            judge_quota.append(1)        # not saved, so it is graded when you re-run judge later
+            return jpath, None
         out = dict(base, judge_model=cfg["judge"]["model"], judge_raw=raws,
                    keyword_refusal=keyword_refusal(rec["text"]))
         if parsed is None:
@@ -143,7 +169,12 @@ def judge(client, cfg, suite, pilot=False, yes=False):
     with ThreadPoolExecutor(cfg["generation"]["concurrency"]) as ex:
         for fu in tqdm(as_completed([ex.submit(work, j) for j in jobs]), total=len(jobs)):
             jpath, rec = fu.result()
+            if rec is None:
+                continue
             fails += rec.get("judge_failed", 0)
             with open(jpath, "a") as f:
                 f.write(json.dumps(rec) + "\n")
+    if judge_quota:
+        print("The judge model hit its usage limit. Ungraded responses were NOT saved as failures: run the same "
+              "judge command again later (or switch judge.model) and they will be graded then.")
     print(f"Done. Judge failed to return valid output {fails} time(s); these are reported, not guessed.")

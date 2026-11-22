@@ -118,7 +118,8 @@ def cost_rows(df):
     return (df.groupby(["suite", "model_label"])
               .agg(calls=("uid", "size"), errors=("error", lambda x: x.notna().sum()),
                    median_latency_s=("latency_s", "median"),
-                   prompt_tokens=("prompt_tokens", "sum"), completion_tokens=("completion_tokens", "sum"))
+                   prompt_tokens=("prompt_tokens", lambda x: x.sum(min_count=1)),
+                   completion_tokens=("completion_tokens", lambda x: x.sum(min_count=1)))
               .reset_index())
 
 
@@ -162,7 +163,8 @@ def write(pilot=False):
             lines.append(f"| {r.suite} | {r.metric} | {r.model_a} - {r.model_b} | {100*r['diff']:+.1f} pts | "
                          f"{100*r.ci_low:+.1f} to {100*r.ci_high:+.1f} | {r.p_holm:.3f} |")
         lines.append("")
-    lines += ["## Cost and errors", "", cost.to_markdown(index=False), ""]
+    lines += ["## Cost and errors", "", "Token counts are blank when the client (opencode) does not report them; "
+              "use the AgentRouter dashboard for spend.", "", cost.to_markdown(index=False), ""]
     (RESULTS / f"summary_{tag}.md").write_text("\n".join(lines))
     _plot(m, tag)
     print("\n".join(lines))

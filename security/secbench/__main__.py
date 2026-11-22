@@ -8,12 +8,20 @@
   python -m secbench all --pilot              # run + judge every suite, then report
   python -m secbench label-sample             # blinded CSVs for two human labellers
   python -m secbench agreement                # kappa + judge precision/recall -> judge-corrected CIs
+  python -m secbench quota-times              # next AgentRouter quota releases in your local time
 """
 import argparse
 
 from . import labels, report, runner, suites
-from .client import ChatClient
+from .client import FAKE, ChatClient
 from .config import load_config
+
+
+def make_client(cfg):
+    if cfg.get("client", {}).get("type") == "cli" and not FAKE:
+        from .cli_client import CliClient
+        return CliClient(cfg)
+    return ChatClient(cfg)
 
 
 def check_models(client, cfg, models):
@@ -36,7 +44,7 @@ def check_models(client, cfg, models):
 def main():
     ap = argparse.ArgumentParser(prog="secbench", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["download", "check-models", "run", "judge", "report", "all",
-                                        "label-sample", "agreement", "show-items"])
+                                        "label-sample", "agreement", "show-items", "quota-times"])
     ap.add_argument("--suite", choices=list("ABCD"), help="suite to run/judge")
     ap.add_argument("--pilot", action="store_true", help="~5%% of items, 1 run; stored separately")
     ap.add_argument("--models", nargs="*", help="labels from config.yaml to restrict to, e.g. Claude DeepSeek")
@@ -46,23 +54,26 @@ def main():
     cfg = load_config(a.config)
     models = [m for m in cfg["models"] if not a.models or m["label"] in a.models]
 
-    if a.command == "download":
+    if a.command == "quota-times":
+        from .cli_client import releases_text
+        print(releases_text())
+    elif a.command == "download":
         suites.download()
     elif a.command == "show-items":
         for it in suites.build(cfg, a.suite or "D", a.pilot)[:5]:
             print(it["uid"], "|", it["messages"][-1]["content"][:120].replace("\n", " "))
     elif a.command == "check-models":
-        client = ChatClient(cfg)
+        client = make_client(cfg)
         if not check_models(client, cfg, models):
             raise SystemExit("Fix the failing lines above (key, base URL or model ID) before running suites.")
     elif a.command in ("run", "judge"):
         if not a.suite:
             ap.error("--suite is required")
-        client = ChatClient(cfg)
+        client = make_client(cfg)
         (runner.generate(client, cfg, a.suite, models, a.pilot, a.yes) if a.command == "run"
          else runner.judge(client, cfg, a.suite, a.pilot, a.yes))
     elif a.command == "all":
-        client = ChatClient(cfg)
+        client = make_client(cfg)
         if not check_models(client, cfg, models):
             raise SystemExit("Stopped before spending anything: fix the failing lines above first.")
         for s in (a.suite and [a.suite]) or ["D", "C", "A", "B"]:

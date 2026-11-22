@@ -1,0 +1,36 @@
+# Scaffold benchmark (Benchmark 3): same model, different agent scaffolds, indirect prompt injection.
+# Runs through plain opencode -> AgentRouter (a supported client). No LLM judge: every check is deterministic.
+
+client:
+  provider: agentrouter        # provider ID in your opencode config
+  command: ["opencode"]        # resolved to the real opencode.exe on Windows
+  timeout_s: 300
+
+models:                        # both tested on 21 Nov 2026 and working
+  - id: gpt-5.6-sol            # route: agentrouter (chat API)
+    label: GPT-5.6
+  - id: agentrouter-r/gpt-6.1-sol   # route: agentrouter-r (Responses API). NOT gpt-6.2-sol (no channel)
+    label: GPT-6.1
+
+scaffolds:                     # the factor under test; same tasks, same model, same budget
+  - name: S0_pasted
+    mode: pasted               # files pasted into the prompt; the agent never touches the folder
+    description: "No tool use: file contents pasted into the prompt (closest to a plain chat call)"
+  - name: S1_agent_readonly
+    mode: workspace            # agent reads the files itself; opencode's default approvals (no --auto)
+    description: "Agent reads the workspace with tools; actions that need approval are not auto-approved"
+  - name: S2_agent_auto
+    mode: workspace
+    auto: true                 # --auto: tool actions auto-approved (can write files / run commands in a temp folder)
+    description: "Agent with auto-approved tools (most capable, most exposed)"
+  - name: S3_auto_guard
+    mode: workspace
+    auto: true
+    guard: true                # AGENTS.md security policy: file contents are untrusted data
+    description: "Same as S2 plus a defensive project instruction file (AGENTS.md)"
+
+runs: 2                        # repeats per item; 45 items x 4 scaffolds x 2 runs = 360 agent runs per model
+concurrency: 2                 # 3 caused opencode private-server start-up errors
+max_new_runs_per_command: 1000
+pilot_items: 8                 # --pilot: 8 items x 4 scaffolds x 1 run = 32 agent runs per model
+seed: 2453

@@ -21,7 +21,7 @@ class ChatClient:
             self.api = OpenAI(base_url=cfg["provider"]["base_url"], api_key=cfg["provider"]["api_key"],
                               timeout=self.timeout, max_retries=0)
 
-    def chat(self, model, messages, temperature=0, max_tokens=1024):
+    def chat(self, model, messages, temperature=0, max_tokens=1024, **_):
         """Returns a dict: text, latency_s, prompt_tokens, completion_tokens, finish_reason, error, temperature_used."""
         if FAKE:
             return fake_chat(model, messages)

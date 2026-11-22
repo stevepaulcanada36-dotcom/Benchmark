@@ -156,8 +156,25 @@ def suite_d(cfg):
 BUILDERS = {"A": suite_a, "B": suite_b, "C": suite_c, "D": suite_d}
 
 
+def _cap(cfg, suite, items):
+    k = cfg["suites"].get(suite, {}).get("max_items")
+    if k is None:
+        return items
+    rnd = random.Random(cfg["seed"])
+    if suite == "B":
+        bases = sorted({it["base_uid"] for it in items})
+        keep = set(rnd.sample(bases, min(k, len(bases))))
+        return [it for it in items if it["base_uid"] in keep]
+    if k >= len(items):
+        return items
+    keep = set(rnd.sample(range(len(items)), k))
+    return [it for i, it in enumerate(items) if i in keep]
+
+
 def build(cfg, suite, pilot=False):
-    items = BUILDERS[suite](cfg)
+    items = _cap(cfg, suite, BUILDERS[suite](cfg))
+    if not items:
+        return items
     if pilot:
         rnd = random.Random(cfg["seed"])
         k = max(3, round(len(items) * cfg["pilot_fraction"]))

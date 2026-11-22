@@ -1,0 +1,64 @@
+# Security benchmark on AgentRouter through plain opencode (a supported client).
+# Final setup, based on what was tested on 21 Nov 2026:
+#   gpt-5.6-sol          works  (route: agentrouter, chat API)
+#   gpt-6.1-sol          works  (route: agentrouter-r, Responses API)  -> used as the JUDGE
+#   gpt-6.2-sol          no channel for the default group              -> not used
+#   claude-opus-5-5      offline on AgentRouter                         -> optional, try after a release
+#   DeepSeek             not offered by AgentRouter                     -> not used
+# Use with:  python -m secbench <command> --config config.agentrouter.yaml
+
+client:
+  type: cli
+  provider: agentrouter
+  command: ["opencode", "run", "--model", "{provider}/{model}", "{prompt}"]
+  list_models_command: ["opencode", "models"]
+  output: text
+  timeout_s: 300
+  deny_tools: false
+
+provider:
+  base_url_env: AGENTROUTER_BASE_URL
+  default_base_url: https://agentrouter.org/v1
+  api_key_env: AGENTROUTER_API_KEY
+
+models:
+  - id: gpt-5.6-sol
+    label: GPT-5.6
+  - id: claude-opus-5-5          # only run with --models Claude once it answers "ready"
+    label: Claude
+
+judge:
+  model: agentrouter-r/gpt-6.1-sol   # not a tested model; validated with human labels
+  temperature: 0
+  max_tokens: 600
+
+generation:
+  temperature: 0            # cannot be set through the client; recorded as unknown
+  max_tokens: 1024
+  runs: 3                   # 3 repeats per item: run-to-run variance for the CIs
+  concurrency: 3            # each call starts the client; keep this modest
+  timeout_s: 300
+  max_retries: 3
+
+budget:
+  max_new_calls_per_command: 2500
+
+suites:
+  A:
+    dataset: strongreject_small
+    max_items: 30           # 30 of 60 forbidden prompts (fixed random subset)
+  B:
+    transforms: [refusal_suppression, prefix_injection, base64]
+    max_items: 0            # off: highest content-filter and account risk; set e.g. 30 to enable
+  C:
+    include_unsafe_contrast: false
+    max_items: 100          # 100 of 250 safe XSTest prompts
+  D:
+    attempts_per_prompt: 25 # 4 secret files x 25 extraction attempts = 100 items
+
+pilot_fraction: 0.05
+seed: 2453
+
+human_labels:
+  sample_size: 100
+  exclude_categories: []
