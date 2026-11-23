@@ -1,0 +1,30 @@
+# VideoBench (Benchmark 5): audio-visual reasoning on clips we generate ourselves (exact ground truth).
+# Simplified AV-ReasonBench: temporal order, audio-video sync, cross-modal hallucination, long clips,
+# evidence timestamps, and a modality ablation (av / video_only / shifted / swapped audio).
+# Models: Gemini through Google AI Studio's FREE tier (native video + audio input). Costs $0.
+
+api_key_env: GEMINI_API_KEY        # free key from https://aistudio.google.com/apikey -> put in the repo .env
+seed: 2453
+
+systems:                           # check with: python -m videobench check-models
+  - {name: gemini-3.8-flash,      model: gemini-3.8-flash,      runs: 2}
+  - {name: gemini-3.5-flash-lite, model: gemini-3.5-flash-lite, runs: 2}
+  - {name: gemini-3.1-flash-lite, model: gemini-3.1-flash-lite, runs: 2}
+  - {name: gemini-3.8-flash@5fps, model: gemini-3.8-flash, fps: 5, runs: 1}   # ablation: denser frame sampling (default is 1 fps)
+
+# clips
+clips_per_suite: 8                 # temporal, sync, hallucination scenes; each in 4 audio conditions
+long_durations_s: [60, 150]
+long_clips_per_duration: 3
+shift_s: 1.5                       # audio delay in the "shifted" condition (never lands on another event)
+render_fps: 10
+max_sound_s: 1.2
+sounds_from: ../listen/assets/sfx  # reuse ListenBench's ElevenLabs sound effects (build ListenBench first)
+
+# grading
+time_tolerance_s: 1.5              # a time answer counts as right within this (Gemini samples 1 frame/s by default)
+
+# free-tier etiquette
+requests_per_minute: 8             # stay under the free-tier rate limit; raise if your limits allow
+max_output_tokens: 1024
+pilot_scenes: 4                    # --pilot: 4 scenes (all conditions), 1 run
