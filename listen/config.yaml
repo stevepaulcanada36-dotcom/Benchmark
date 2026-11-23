@@ -1,0 +1,38 @@
+# ListenBench (Benchmark 4): controlled audio understanding.
+# We build every test clip ourselves, so the exact ground truth is known: what was said, when speech starts,
+# which sound event happens and when, who speaks each turn, and which clips contain no speech at all.
+# Ideas from AV-ReasonBench (temporal grounding, hallucination, source attribution, condition ablation),
+# kept audio-only so it runs on a laptop with ElevenLabs credits and no AgentRouter spend.
+
+api_key_env: ELEVENLABS_API_KEY
+seed: 2453
+
+# --- building the clips (ElevenLabs credits, one-off, cached) ---
+speech_source: ../audio/audio/main/multi-v2   # reuse the audio benchmark's S1 clips (no new credits)
+tts_model: eleven_flash_v2_5                  # only for clips not found above + the dialogues (0.5 credits/char)
+tts_credits_per_char: 0.5
+voice_a: JBFqnCBsd6RMkjVDRZzb                 # same voice as the audio benchmark
+voice_b: EXAVITQu4vr4xnSDxMaL                 # second speaker for the dialogues; if it errors, pick one with
+                                              #   python -m audiobench list-voices  (run inside audio/)
+sfx_model: eleven_text_to_sound_v3
+sfx_credits_est: 200                          # per sound effect, ESTIMATE only; build prints the real usage
+sample_rate: 16000
+
+# --- systems under test ---
+systems:
+  - {name: scribe-v3,        kind: scribe,  model_id: scribe_v3, runs: 2}
+  - {name: scribe-v2,        kind: scribe,  model_id: scribe_v2, runs: 2}
+  - {name: whisper-v3,       kind: whisper, model: large-v3, vad: false, runs: 1}   # local, free, deterministic
+  - {name: whisper-v3-vad,   kind: whisper, model: large-v3, vad: true,  runs: 1}   # same + silence filter
+
+# Speech-to-text is billed per minute of audio. ESTIMATE until the pilot measures it:
+# after `transcribe --pilot` the tool prints the real credits per minute; put that number here.
+stt_credits_per_minute: 19   # pilot: ElevenLabs usage API shows 98 STT credits for 5.38 min (the tool's 174 included delayed build charges)
+whisper_device: cpu
+pilot_fraction: 0.1
+max_credits: 30000            # hard stop for everything this benchmark spends (build + transcribe)
+
+# --- grading tolerances ---
+onset_tolerance_s: 0.5        # speech onset counts as correct within this many seconds
+event_window_s: 1.5           # a tagged sound event must start within this many seconds of the real one
+trailing_gap_s: 0.5           # words starting this long after speech ended count as hallucinated insertions
