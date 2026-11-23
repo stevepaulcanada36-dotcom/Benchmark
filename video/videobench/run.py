@@ -167,15 +167,19 @@ def run(cfg, systems, pilot=False, yes=False):
     if not yes and input("Proceed? [y/N] ").strip().lower() != "y":
         raise SystemExit("Cancelled.")
     gap, last, fails = 60.0 / cfg["requests_per_minute"], 0.0, 0
+    exhausted = set()                  # models at their daily free quota; the quota is per model, so skip only those
     for k, (s, c, r) in enumerate(jobs, 1):
+        if s["model"] in exhausted:
+            continue
         if not FAKE:
             time.sleep(max(0.0, gap - (time.time() - last)))
             last = time.time()
         try:
             rec = fake(cfg, s, c, r) if FAKE else gemini(cfg, s, c, r)
         except DailyQuota as e:
-            print(f"Daily free-tier quota reached for {s['name']} ({e}).\nRun the same command tomorrow; finished requests are kept.")
-            break
+            exhausted.add(s["model"])
+            print(f"  Daily free-tier quota reached for {s['model']}: skipping it for the rest of this run ({str(e)[:120]}).")
+            continue
         rec.update(uid=c["uid"], run=r, system=s["name"], model=s["model"], fps=s.get("fps"),
                    ts=datetime.now(timezone.utc).isoformat())
         if rec.get("error"):
@@ -187,6 +191,10 @@ def run(cfg, systems, pilot=False, yes=False):
             f.write(json.dumps(rec) + "\n")
         if k % 10 == 0 or k == len(jobs):
             print(f"  {k}/{len(jobs)} done")
+    if exhausted:
+        left = sum(s["model"] in exhausted for s, _, _ in jobs)
+        print(f"Out of daily quota: {', '.join(sorted(exhausted))} ({left} requests not sent). "
+              "Run the same command tomorrow; finished requests are kept.")
     print(f"Done. {fails} failed request(s); re-run to retry them.")
 
 
