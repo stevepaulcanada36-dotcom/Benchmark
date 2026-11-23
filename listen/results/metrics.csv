@@ -1,0 +1,79 @@
+system,suite,condition,metric,description,estimate,ci_low,ci_high,n_units,runs,percent
+scribe-v2,L1,clean,wer,"WER, clean speech",0.010158730158730157,0.0011111111111111111,0.02571428571428571,30,2.0,True
+scribe-v2,L1,cafe_10db,wer,"WER, cafe noise 10 dB SNR",0.0020833333333333333,0.0,0.00625,30,2.0,True
+scribe-v2,L1,cafe_0db,wer,"WER, cafe noise 0 dB SNR",0.0035714285714285713,0.0,0.010714285714285713,30,2.0,True
+scribe-v2,L1,street_0db,wer,"WER, street noise 0 dB SNR",0.0,0.0,0.0,30,2.0,True
+scribe-v2,L3,all,hallucinated,No-speech clips with invented words (lower is better),0.0,0.0,0.0,12,2.0,True
+scribe-v2,L3,all,halluc_words,Invented words per no-speech clip,0.0,0.0,0.0,12,2.0,False
+scribe-v2,L1,all,any_insertion,Speech clips with words invented in the silence/noise around speech,0.0,0.0,0.0,30,2.0,True
+scribe-v2,L1,all,onset_ok,Speech onset within tolerance,1.0,1.0,1.0,30,2.0,True
+scribe-v2,L1,all,onset_err,"Speech onset error, seconds",0.07261666666666663,0.06468250000000002,0.08093333333333332,30,2.0,False
+scribe-v2,L1,all,offset_err,"Speech end error, seconds",0.08564999999999999,0.07643333333333333,0.09500041666666673,30,2.0,False
+scribe-v2,L4,all,event_correct,"Sound event tagged correctly, near the right time",0.75,0.5,1.0,12,2.0,True
+scribe-v2,L3,all,event_correct,Sound event tagged correctly (event-only clips),1.0,1.0,1.0,6,2.0,True
+scribe-v2,L4,all,event_time_err,"Sound event timing error, seconds",0.5604444444444445,0.3017666666666667,0.7742333333333332,9,2.0,False
+scribe-v2,L4,all,any_insertion,Words invented on the sound event or in silence,0.0,0.0,0.0,12,2.0,True
+scribe-v2,L1,clean,false_event,Clean speech clips with a sound event that was not there,0.0,0.0,0.0,30,2.0,True
+scribe-v2,L4,all,wer,"WER, speech with a sound event",0.0,0.0,0.0,12,2.0,True
+scribe-v2,L5,all,wer,"WER, two-speaker dialogue",0.0,0.0,0.0,8,2.0,True
+scribe-v2,L5,all,speaker_count_ok,Dialogues where exactly 2 speakers were found,1.0,1.0,1.0,8,2.0,True
+scribe-v2,L5,all,speaker_attribution,Words attributed to the right speaker,1.0,1.0,1.0,8,2.0,True
+scribe-v2,L1,cafe_10db,noise_penalty,"WER increase, cafe_10db minus clean (paired)",-0.008075396825396824,-0.023869047619047616,0.0030555555555555557,30,,True
+scribe-v2,L1,cafe_0db,noise_penalty,"WER increase, cafe_0db minus clean (paired)",-0.006587301587301587,-0.02293650793650794,0.007142857142857143,30,,True
+scribe-v2,L1,street_0db,noise_penalty,"WER increase, street_0db minus clean (paired)",-0.010158730158730157,-0.02571428571428571,-0.0011111111111111111,30,,True
+scribe-v2,ALL,all,identical_reruns,Clips transcribed identically in every run,0.875,,,152,2.0,True
+scribe-v3,L1,clean,wer,"WER, clean speech",0.0023809523809523807,0.0,0.007142857142857143,30,2.0,True
+scribe-v3,L1,cafe_10db,wer,"WER, cafe noise 10 dB SNR",0.0023809523809523807,0.0,0.007142857142857143,30,2.0,True
+scribe-v3,L1,cafe_0db,wer,"WER, cafe noise 0 dB SNR",0.0023809523809523807,0.0,0.007142857142857143,30,2.0,True
+scribe-v3,L1,street_0db,wer,"WER, street noise 0 dB SNR",0.0023809523809523807,0.0,0.007142857142857143,30,2.0,True
+scribe-v3,L3,all,hallucinated,No-speech clips with invented words (lower is better),0.0,0.0,0.0,12,2.0,True
+scribe-v3,L3,all,halluc_words,Invented words per no-speech clip,0.0,0.0,0.0,12,2.0,False
+scribe-v3,L1,all,any_insertion,Speech clips with words invented in the silence/noise around speech,0.0,0.0,0.0,30,2.0,True
+scribe-v3,L1,all,onset_ok,Speech onset within tolerance,1.0,1.0,1.0,30,2.0,True
+scribe-v3,L1,all,onset_err,"Speech onset error, seconds",0.07349999999999997,0.06519999999999998,0.08190166666666665,30,2.0,False
+scribe-v3,L1,all,offset_err,"Speech end error, seconds",0.08081666666666663,0.07154916666666658,0.08998333333333329,30,2.0,False
+scribe-v3,L4,all,event_correct,"Sound event tagged correctly, near the right time",1.0,1.0,1.0,12,2.0,True
+scribe-v3,L3,all,event_correct,Sound event tagged correctly (event-only clips),1.0,1.0,1.0,6,2.0,True
+scribe-v3,L4,all,event_time_err,"Sound event timing error, seconds",0.535,0.31900000000000006,0.7513416666666664,12,2.0,False
+scribe-v3,L4,all,any_insertion,Words invented on the sound event or in silence,0.0,0.0,0.0,12,2.0,True
+scribe-v3,L1,clean,false_event,Clean speech clips with a sound event that was not there,0.0,0.0,0.0,30,2.0,True
+scribe-v3,L4,all,wer,"WER, speech with a sound event",0.005952380952380952,0.0,0.017857142857142856,12,2.0,True
+scribe-v3,L5,all,wer,"WER, two-speaker dialogue",0.013620689655172415,0.0,0.030862068965517242,8,2.0,True
+scribe-v3,L5,all,speaker_count_ok,Dialogues where exactly 2 speakers were found,1.0,1.0,1.0,8,2.0,True
+scribe-v3,L5,all,speaker_attribution,Words attributed to the right speaker,1.0,1.0,1.0,8,2.0,True
+scribe-v3,L1,cafe_10db,noise_penalty,"WER increase, cafe_10db minus clean (paired)",0.0,0.0,0.0,30,,True
+scribe-v3,L1,cafe_0db,noise_penalty,"WER increase, cafe_0db minus clean (paired)",0.0,0.0,0.0,30,,True
+scribe-v3,L1,street_0db,noise_penalty,"WER increase, street_0db minus clean (paired)",0.0,0.0,0.0,30,,True
+scribe-v3,ALL,all,identical_reruns,Clips transcribed identically in every run,0.9868421052631579,,,152,2.0,True
+whisper-v3,L1,clean,wer,"WER, clean speech",0.005555555555555555,0.0,0.016666666666666666,30,1.0,True
+whisper-v3,L1,cafe_10db,wer,"WER, cafe noise 10 dB SNR",0.005555555555555555,0.0,0.016666666666666666,30,1.0,True
+whisper-v3,L1,cafe_0db,wer,"WER, cafe noise 0 dB SNR",0.010019841269841269,0.0,0.023809523809523805,30,1.0,True
+whisper-v3,L1,street_0db,wer,"WER, street noise 0 dB SNR",0.0,0.0,0.0,30,1.0,True
+whisper-v3,L3,all,hallucinated,No-speech clips with invented words (lower is better),1.0,1.0,1.0,12,1.0,True
+whisper-v3,L3,all,halluc_words,Invented words per no-speech clip,2.4166666666666665,1.9166666666666667,2.9166666666666665,12,1.0,False
+whisper-v3,L1,all,any_insertion,Speech clips with words invented in the silence/noise around speech,0.0,0.0,0.0,30,1.0,True
+whisper-v3,L1,all,onset_ok,Speech onset within tolerance,0.475,0.31666666666666665,0.6333333333333333,30,1.0,True
+whisper-v3,L1,all,onset_err,"Speech onset error, seconds",0.5476666666666666,0.4838941666666667,0.6233675000000002,30,1.0,False
+whisper-v3,L1,all,offset_err,"Speech end error, seconds",0.3749,0.3525316666666668,0.3985349999999999,30,1.0,False
+whisper-v3,L4,all,any_insertion,Words invented on the sound event or in silence,0.3333333333333333,0.08333333333333333,0.5833333333333334,12,1.0,True
+whisper-v3,L4,all,wer,"WER, speech with a sound event",0.0,0.0,0.0,12,1.0,True
+whisper-v3,L5,all,wer,"WER, two-speaker dialogue",0.0,0.0,0.0,8,1.0,True
+whisper-v3,L1,cafe_10db,noise_penalty,"WER increase, cafe_10db minus clean (paired)",0.0,0.0,0.0,30,,True
+whisper-v3,L1,cafe_0db,noise_penalty,"WER increase, cafe_0db minus clean (paired)",0.004464285714285714,0.0,0.01130952380952381,30,,True
+whisper-v3,L1,street_0db,noise_penalty,"WER increase, street_0db minus clean (paired)",-0.005555555555555555,-0.016666666666666666,0.0,30,,True
+whisper-v3-vad,L1,clean,wer,"WER, clean speech",0.0,0.0,0.0,30,1.0,True
+whisper-v3-vad,L1,cafe_10db,wer,"WER, cafe noise 10 dB SNR",0.0,0.0,0.0,30,1.0,True
+whisper-v3-vad,L1,cafe_0db,wer,"WER, cafe noise 0 dB SNR",0.0020833333333333333,0.0,0.00625,30,1.0,True
+whisper-v3-vad,L1,street_0db,wer,"WER, street noise 0 dB SNR",0.0,0.0,0.0,30,1.0,True
+whisper-v3-vad,L3,all,hallucinated,No-speech clips with invented words (lower is better),0.08333333333333333,0.0,0.25,12,1.0,True
+whisper-v3-vad,L3,all,halluc_words,Invented words per no-speech clip,0.75,0.0,2.25,12,1.0,False
+whisper-v3-vad,L1,all,any_insertion,Speech clips with words invented in the silence/noise around speech,0.0,0.0,0.0,30,1.0,True
+whisper-v3-vad,L1,all,onset_ok,Speech onset within tolerance,0.9833333333333333,0.9583333333333334,1.0,30,1.0,True
+whisper-v3-vad,L1,all,onset_err,"Speech onset error, seconds",0.33525000000000005,0.3171158333333332,0.35714999999999997,30,1.0,False
+whisper-v3-vad,L1,all,offset_err,"Speech end error, seconds",0.38165,0.35808125,0.4073837500000001,30,1.0,False
+whisper-v3-vad,L4,all,any_insertion,Words invented on the sound event or in silence,0.08333333333333333,0.0,0.25,12,1.0,True
+whisper-v3-vad,L4,all,wer,"WER, speech with a sound event",0.0,0.0,0.0,12,1.0,True
+whisper-v3-vad,L5,all,wer,"WER, two-speaker dialogue",0.005,0.0,0.015,8,1.0,True
+whisper-v3-vad,L1,cafe_10db,noise_penalty,"WER increase, cafe_10db minus clean (paired)",0.0,0.0,0.0,30,,True
+whisper-v3-vad,L1,cafe_0db,noise_penalty,"WER increase, cafe_0db minus clean (paired)",0.0020833333333333333,0.0,0.00625,30,,True
+whisper-v3-vad,L1,street_0db,noise_penalty,"WER increase, street_0db minus clean (paired)",0.0,0.0,0.0,30,,True

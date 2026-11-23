@@ -1,0 +1,25 @@
+comparison,a,b,diff,ci_low,ci_high,p,n_units,p_holm
+WER (all L1 conditions),scribe-v2,scribe-v3,0.0015724206349206349,-0.005230034722222222,0.0071680307539682495,0.5616,30,1.0
+WER (all L1 conditions),scribe-v2,whisper-v3,-0.0013293650793650797,-0.011607142857142856,0.00591765873015873,0.842,30,1.0
+WER (all L1 conditions),scribe-v2,whisper-v3-vad,0.0034325396825396824,0.00012896825396825393,0.007649057539682535,0.0376,30,0.6016
+WER (all L1 conditions),scribe-v3,whisper-v3,-0.002901785714285714,-0.013541666666666667,0.005952380952380953,0.58,30,1.0
+WER (all L1 conditions),scribe-v3,whisper-v3-vad,0.0018601190476190475,-0.0015625,0.007142857142857143,0.7476,30,1.0
+WER (all L1 conditions),whisper-v3,whisper-v3-vad,0.0047619047619047615,-0.0005208333333333333,0.014136904761904762,0.2048,30,1.0
+No-speech hallucination,scribe-v2,scribe-v3,0.0,0.0,0.0,1.0,12,1.0
+No-speech hallucination,scribe-v2,whisper-v3,-1.0,-1.0,-1.0,0.0,12,0.0
+No-speech hallucination,scribe-v2,whisper-v3-vad,-0.08333333333333333,-0.25,0.0,0.6904,12,1.0
+No-speech hallucination,scribe-v3,whisper-v3,-1.0,-1.0,-1.0,0.0,12,0.0
+No-speech hallucination,scribe-v3,whisper-v3-vad,-0.08333333333333333,-0.25,0.0,0.6904,12,1.0
+No-speech hallucination,whisper-v3,whisper-v3-vad,0.9166666666666666,0.75,1.0,0.0,12,0.0
+Onset error (s),scribe-v2,scribe-v3,-0.0008833333333333342,-0.002100000000000002,8.333333333333341e-05,0.1004,30,1.0
+Onset error (s),scribe-v2,whisper-v3,-0.47505000000000014,-0.5559179166666666,-0.40794916666666664,0.0,30,0.0
+Onset error (s),scribe-v2,whisper-v3-vad,-0.26263333333333333,-0.28585083333333333,-0.24091625000000003,0.0,30,0.0
+Onset error (s),scribe-v3,whisper-v3,-0.4741666666666667,-0.5556341666666667,-0.4070316666666668,0.0,30,0.0
+Onset error (s),scribe-v3,whisper-v3-vad,-0.26175,-0.2851004166666667,-0.23980000000000004,0.0,30,0.0
+Onset error (s),whisper-v3,whisper-v3-vad,0.21241666666666667,0.15116666666666664,0.2862520833333333,0.0,30,0.0
+Invented words around speech,scribe-v2,scribe-v3,0.0,0.0,0.0,1.0,30,1.0
+Invented words around speech,scribe-v2,whisper-v3,0.0,0.0,0.0,1.0,30,1.0
+Invented words around speech,scribe-v2,whisper-v3-vad,0.0,0.0,0.0,1.0,30,1.0
+Invented words around speech,scribe-v3,whisper-v3,0.0,0.0,0.0,1.0,30,1.0
+Invented words around speech,scribe-v3,whisper-v3-vad,0.0,0.0,0.0,1.0,30,1.0
+Invented words around speech,whisper-v3,whisper-v3-vad,0.0,0.0,0.0,1.0,30,1.0
