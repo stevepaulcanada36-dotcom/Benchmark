@@ -23,8 +23,9 @@ Every answer also carries a timestamp and a confidence, which give two more meas
 right timestamp"** (grounding) and the **Brier score** (calibration).
 
 **Models**: Gemini via Google AI Studio's **free tier**, which accepts video plus audio natively and costs $0:
-`gemini-3.8-flash`, `gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, and `gemini-3.8-flash` at 5 frames per second
-(an ablation; Gemini samples 1 frame/s by default). Temperature 0, fixed seed, 2 runs.
+`gemini-3.5-flash-lite` and `gemini-3.1-flash-lite`. Temperature 0, fixed seed, 2 runs.
+`gemini-3.8-flash` (and a 5 frames-per-second ablation of it) was planned but dropped: its free-tier daily quota
+ran out before the pilot, and the benchmark stays at $0. It can be re-enabled in `config.yaml` with a paid key.
 The models we can reach through AgentRouter cannot take video or audio input, which is why this benchmark uses Gemini.
 
 **Statistics**: 95% CIs come from a cluster bootstrap over scenes: a scene's 4 versions, its questions and its
@@ -41,9 +42,9 @@ pip install google-genai imageio-ffmpeg
 cd video
 python -m videobench build           # renders 102 clips locally (~1 min), free
 python -m videobench check-models    # one request per model; remove any that fail from config.yaml
-python -m videobench run --pilot     # 16 clips x 4 models, 1 run
+python -m videobench run --pilot     # 16 clips x 2 models, 1 run
 python -m videobench report          # look at results/summary.md before the full run
-python -m videobench run             # ~700 requests, ~90 min at 8 requests/min; resumes
+python -m videobench run             # ~400 requests, ~50 min at 8 requests/min; resumes
 python -m videobench report
 ```
 If you hit the daily free limit, the run stops cleanly. Run the same command the next day, and finished requests

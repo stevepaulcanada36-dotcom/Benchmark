@@ -7,10 +7,12 @@ api_key_env: GEMINI_API_KEY        # free key from https://aistudio.google.com/a
 seed: 2453
 
 systems:                           # check with: python -m videobench check-models
-  - {name: gemini-3.8-flash,      model: gemini-3.8-flash,      runs: 2}
   - {name: gemini-3.5-flash-lite, model: gemini-3.5-flash-lite, runs: 2}
   - {name: gemini-3.1-flash-lite, model: gemini-3.1-flash-lite, runs: 2}
-  - {name: gemini-3.8-flash@5fps, model: gemini-3.8-flash, fps: 5, runs: 1}   # ablation: denser frame sampling (default is 1 fps)
+  # Dropped (2026-11-23): gemini-3.8-flash and its 5 fps ablation. The free tier's daily quota for it ran out
+  # during check-models, and we chose to stay at $0 rather than enable billing.
+  # - {name: gemini-3.8-flash,      model: gemini-3.8-flash,      runs: 2}
+  # - {name: gemini-3.8-flash@5fps, model: gemini-3.8-flash, fps: 5, runs: 1}
 
 # clips
 clips_per_suite: 8                 # temporal, sync, hallucination scenes; each in 4 audio conditions
