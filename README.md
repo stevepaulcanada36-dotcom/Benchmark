@@ -1,6 +1,6 @@
-# LLM Benchmarks: Audio, Security and Scaffolds (STA2453H)
+# LLM Benchmarks: Audio, Security, Scaffolds, Listening and Video (STA2453H)
 
-This repo holds three benchmarks. Each releases its code and exact prompts, repeats every run, reports 95%
+This repo holds five benchmarks. Each releases its code and exact prompts, repeats every run, reports 95%
 confidence intervals on every number, records cost, and checks its automatic graders against human labels.
 
 | Folder | Benchmark | Models | Grading |
@@ -8,6 +8,8 @@ confidence intervals on every number, records cost, and checks its automatic gra
 | `audio/` | Text-to-speech: intelligibility, text normalization, homographs, expressiveness, long-form | 5 ElevenLabs models | Whisper WER, pass/fail checks, listening test |
 | `security/` | Harmful-request compliance, over-refusal, system-prompt secret leakage | GPT-5.6, GPT-6.2, Claude (AgentRouter) | Regex (leaks), LLM judge GPT-6.1 + human labels |
 | `scaffold/` | Prompt injection: does the agent harness change how easily a model is hijacked? | Same model, 4 scaffolds (AgentRouter) | Deterministic checks + manual review of every hit |
+| `listen/` | Audio understanding on clips we build (exact ground truth): noise, timestamps, hallucination on silence, sound events, speakers | Scribe v3, Scribe v2, Whisper large-v3 (+VAD) | Deterministic, against known ground truth |
+| `video/` | Audio-visual reasoning on videos we generate: event order, sync, cross-modal hallucination, long clips, modality ablation | Gemini 3.8 Flash, 3.5/3.1 Flash-Lite (free tier) | Deterministic, against known ground truth |
 
 Security and scaffold run through **plain opencode**, which is a client AgentRouter supports. Do not install
 the `opencode-agentrouter` plugin: it fakes client headers, which AgentRouter treats as a ban reason.
@@ -85,6 +87,29 @@ python -m scaffbench run --models GPT-5.6     # 360 agent runs; resumable
 python -m scaffbench report                   # then fill results\review_attacks_main.csv (manual check)
 ```
 Details: [scaffold/DETAILS.md](scaffold/DETAILS.md).
+
+## Part E: Listening (`cd listen`, ElevenLabs credits only)
+
+```powershell
+python -m listenbench build                  # ~2,000 credits; reuses audio S1 clips
+python -m listenbench transcribe --pilot     # prints the real Scribe credits per minute -> config.yaml
+python -m listenbench transcribe
+python -m listenbench report                 # listen\results\summary.md
+```
+Details: [listen/README.md](listen/README.md).
+
+## Part F: Video (`cd video`, Gemini free tier, $0)
+
+Needs `GEMINI_API_KEY` in `.env` (free from aistudio.google.com/apikey) and ListenBench built first.
+```powershell
+pip install google-genai imageio-ffmpeg
+python -m videobench build
+python -m videobench check-models
+python -m videobench run --pilot
+python -m videobench run
+python -m videobench report                  # video\results\summary.md
+```
+Details: [video/README.md](video/README.md).
 
 ## Part D: Save and push
 

@@ -14,3 +14,10 @@ audio/listening_key.json
 audio/.cache/
 # scaffold: raw agent transcripts stay local; results/ is shared
 scaffold/outputs/
+
+listen/assets/
+listen/clips/
+listen/outputs/
+listen/ledger.jsonl
+video/clips/
+video/outputs/
