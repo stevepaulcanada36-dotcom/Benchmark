@@ -1,4 +1,4 @@
-"""Restores the GPT-5.6 scaffold results from git commit 22a950d (the raw GPT-5.6 file was deleted later)
+"""Restores the GPT-5.6 scaffold results from git commit b55b2f2 (the raw GPT-5.6 file was deleted later)
 and writes combined GPT-5.6 + GPT-6.1 results. Run from the repo root:  python restore_scaffold_gpt56.py
 """
 import io
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-COMMIT = "22a950d"
+COMMIT = "b55b2f2"
 R = Path("scaffold/results")
 
 
@@ -35,7 +35,7 @@ t = m[m.metric.isin(keep)].copy()
 t["value"] = t.apply(lambda r: f"{100*r.estimate:.1f}% ({100*r.ci_low:.1f}-{100*r.ci_high:.1f})", axis=1)
 wide = t.pivot_table(index=["metric", "model"], columns="scaffold", values="value", aggfunc="first")
 lines = ["# Scaffold benchmark: combined results (GPT-5.6 + GPT-6.1)", "",
-         "Each cell: estimate (95% CI), cluster bootstrap over items. GPT-5.6 restored from commit 22a950d.", "",
+         "Each cell: estimate (95% CI), cluster bootstrap over items. GPT-5.6 restored from commit b55b2f2.", "",
          wide.to_markdown(), ""]
 (R / "summary_combined.md").write_text("\n".join(lines), encoding="utf-8")
 print("\n".join(lines))

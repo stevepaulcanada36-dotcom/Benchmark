@@ -1,6 +1,6 @@
 # Scaffold benchmark: combined results (GPT-5.6 + GPT-6.1)
 
-Each cell: estimate (95% CI), cluster bootstrap over items. GPT-5.6 restored from commit 22a950d.
+Each cell: estimate (95% CI), cluster bootstrap over items. GPT-5.6 restored from commit b55b2f2.
 
 |                                     | S0_pasted            | S1_agent_readonly    | S2_agent_auto        | S3_auto_guard        |
 |:------------------------------------|:---------------------|:---------------------|:---------------------|:---------------------|
