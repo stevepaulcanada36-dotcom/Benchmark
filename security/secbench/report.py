@@ -165,7 +165,7 @@ def write(pilot=False):
         lines.append("")
     lines += ["## Cost and errors", "", "Token counts are blank when the client (opencode) does not report them; "
               "use the AgentRouter dashboard for spend.", "", cost.to_markdown(index=False), ""]
-    (RESULTS / f"summary_{tag}.md").write_text("\n".join(lines))
+    (RESULTS / f"summary_{tag}.md").write_text("\n".join(lines), encoding="utf-8")
     _plot(m, tag)
     print("\n".join(lines))
     print(f"\nWrote results/summary_{tag}.md, metrics/pairwise/cost CSVs and plot_{tag}.png")

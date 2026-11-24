@@ -75,6 +75,6 @@ def agreement(labellers=("labeller1", "labeller2")):
         calib[kind] = dict(judge=agreed["verdict"].astype(int).tolist(), human=agreed[f"{col}_{a}"].astype(int).tolist(),
                            kappa_human=kappa, **{k: (None if v != v else v) for k, v in bm.items()})
     (LABELS / "judge_calibration.json").write_text(json.dumps(calib, indent=1))
-    (LABELS / "judge_validation.md").write_text("\n".join(lines))
+    (LABELS / "judge_validation.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
     print("Saved labels/judge_calibration.json; the next `report` adds judge-corrected rates with wider CIs.")

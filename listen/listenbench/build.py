@@ -311,7 +311,7 @@ def build(cfg, yes=False):
         for m in man:
             f.write(json.dumps(m) + "\n")
     (WORK / "results").mkdir(exist_ok=True)
-    (WORK / "results" / "manifest.jsonl").write_text((CLIPS / "manifest.jsonl").read_text())
+    (WORK / "results" / "manifest.jsonl").write_text((CLIPS / "manifest.jsonl").read_text(encoding="utf-8"), encoding="utf-8")
     mins = sum(m["duration"] for m in man) / 60
     print(f"Built {len(man)} clips ({mins:.1f} minutes of audio) in listen/clips/. Ground truth: listen/results/manifest.jsonl")
     return man

@@ -88,12 +88,12 @@ Generated 2026-11-21. ASR: faster-whisper large-v3, Whisper English normalizer. 
 | v4-turbo | S2-03 | 0 | Call me at 416-555-0192. |
 | v4-turbo | S2-03 | 1 | Call me at 416-555-0192. |
 | v4-turbo | S2-03 | 2 | Call me at 416-555-0192. |
-| flash-v2.5 | S2-04 | 0 | The temperature dropped to 12캜 overnight. |
-| flash-v2.5 | S2-04 | 1 | The temperature dropped to 12캜 overnight. |
-| flash-v2.5 | S2-04 | 2 | The temperature dropped to 12캜 overnight. |
-| multi-v2 | S2-04 | 0 | The temperature dropped to 12캜 overnight. |
-| multi-v2 | S2-04 | 1 | The temperature dropped to 12캜 overnight. |
-| multi-v2 | S2-04 | 2 | The temperature dropped to 12캜 overnight. |
+| flash-v2.5 | S2-04 | 0 | The temperature dropped to 12째C overnight. |
+| flash-v2.5 | S2-04 | 1 | The temperature dropped to 12째C overnight. |
+| flash-v2.5 | S2-04 | 2 | The temperature dropped to 12째C overnight. |
+| multi-v2 | S2-04 | 0 | The temperature dropped to 12째C overnight. |
+| multi-v2 | S2-04 | 1 | The temperature dropped to 12째C overnight. |
+| multi-v2 | S2-04 | 2 | The temperature dropped to 12째C overnight. |
 | flash-v2.5 | S2-05 | 0 | Chapter 14 begins on p. 212. |
 | flash-v2.5 | S2-05 | 1 | Chapter 14 begins on p. 212. |
 | flash-v2.5 | S2-05 | 2 | Chapter 14 begins on p. 212. |

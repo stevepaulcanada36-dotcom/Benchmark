@@ -58,7 +58,7 @@ def make(cfg, n_mos=60, n_ab=40, pilot=False):
         tasks.append(dict(kind="ab", id=f"{ca}-{cb}", src_a=sa, src_b=sb, a=ca, b=cb,
                           text=by_uid[a["uid"]]["text"]))
     (ROOT / "listening_key.json").write_text(json.dumps(key, indent=1))
-    (LT / "index.html").write_text(HTML.replace("__TASKS__", json.dumps(tasks)))
+    (LT / "index.html").write_text(HTML.replace("__TASKS__", json.dumps(tasks)), encoding="utf-8")
     print(f"Wrote listening_test/ ({sum(t['kind']=='mos' for t in tasks)} MOS clips, "
           f"{sum(t['kind']=='ab' for t in tasks)} A/B pairs). Model identities are in listening_key.json; "
           "do not send that file to listeners.\nZip listening_test/ and send it; each listener opens index.html, "
@@ -111,7 +111,7 @@ def analyze(B=2000):
             lines.append(f"| {models[i]} | {theta[i]:.0f} | {lo:.0f}-{hi:.0f} |")
         lines += ["", f"{len(ab)} judgements; ties count as half a win each."]
     (ROOT / "results").mkdir(exist_ok=True)
-    (ROOT / "results" / "listening_summary.md").write_text("\n".join(lines))
+    (ROOT / "results" / "listening_summary.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
 
 

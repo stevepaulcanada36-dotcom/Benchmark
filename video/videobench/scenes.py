@@ -299,7 +299,7 @@ def build(cfg):
         for m in man:
             f.write(json.dumps(m) + "\n")
     (WORK / "results").mkdir(exist_ok=True)
-    (WORK / "results" / "manifest.jsonl").write_text((CLIPS / "manifest.jsonl").read_text())
+    (WORK / "results" / "manifest.jsonl").write_text((CLIPS / "manifest.jsonl").read_text(encoding="utf-8"), encoding="utf-8")
     print(f"Built {len(man)} clips from {len(set(m['cid'] for m in man))} scenes "
           f"({sum(m['duration'] for m in man) / 60:.1f} min) in video/clips/. Questions: {sum(len(m['questions']) for m in man)}.")
     return man

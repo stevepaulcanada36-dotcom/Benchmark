@@ -93,7 +93,7 @@ def write(cfg, pilot=False):
         lines += ["", "## S2 failures to listen to (manual check)", "", "| Model | Item | Run | Transcript |", "|---|---|---|---|"]
         for _, r in fails.sort_values(["uid", "model_label"]).head(60).iterrows():
             lines.append(f"| {r.model_label} | {r.uid} | {r.run} | {r.transcript[:90]} |")
-    (RESULTS / f"summary_{tag}.md").write_text("\n".join(lines))
+    (RESULTS / f"summary_{tag}.md").write_text("\n".join(lines), encoding="utf-8")
     _plot(m, tag)
     print("\n".join(lines))
     print(f"\nWrote results/summary_{tag}.md, metrics CSV and plot_{tag}.png")
