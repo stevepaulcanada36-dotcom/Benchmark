@@ -260,7 +260,9 @@ def explorer():
     out = []
 
     def add(bench, test, why, better, unit, systems):
-        sy = [dict(name=n, est=float(r.estimate), lo=float(r.ci_low), hi=float(r.ci_high), col=SYSCOL.get(n, BLUE)) for n, r in systems]
+        fix = lambda v, e: float(e) if pd.isna(v) else float(v)   # one-item suites (S5) have no CI
+        sy = [dict(name=n, est=float(r.estimate), lo=fix(r.ci_low, r.estimate), hi=fix(r.ci_high, r.estimate),
+                   col=SYSCOL.get(n, BLUE)) for n, r in systems]
         if sy:
             ests = [s["est"] for s in sy]
             scale = 1.0 if unit == "pct" else max(max(s["hi"] for s in sy), 1e-9)   # sort seconds/counts on a 0-1 scale too
@@ -442,7 +444,10 @@ def build():
                       ci(row(L, system=s, suite="L1", condition="clean", metric="wer")),
                       ci(row(L, system=s, suite="L1", condition="cafe_0db", metric="wer")), ci(hall[s]), ci(onset[s], p=False) + " s"] for s in STT])
 
-    audio_status = ("All five suites are scored." if audio_done else
+    s345 = A[A.suite.isin(["S3", "S4", "S5"]) & (A.metric == "wer")].estimate
+    audio_status = (f"The other suites behave like plain sentences: homographs and names, expressive tags and a long passage "
+                    f"all stay at or below {pct(s345.max(), 1)} word errors for every model, so word error rate alone cannot "
+                    f"rank them there; those suites need the human listening test." if audio_done else
                     f"Suites {', '.join(audio_suites)} are scored so far; S3–S5 have been generated and will appear here once scored.")
 
     page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
