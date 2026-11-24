@@ -1,26 +1,46 @@
 model,suite,metric,description,estimate,ci_low,ci_high,n_items,runs
 flash-v2.5,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
 flash-v2.5,S2,s2_pass,Normalization pass rate (higher is better),0.16,0.04,0.32,25,3
-flash-v2.5,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07199906448797806,0.06641502556741517,0.0781326747368288,55,3
-flash-v2.5,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.6002748070341168,0.5781920698194792,0.6248987484700751,55,3
-flash-v2.5,ALL,credits_used,Estimated credits used,4618.5,,,55,3
+flash-v2.5,S3,wer,"WER, homograph sentences (ASR cannot hear stress; see listening test)",0.0,0.0,0.0,15,3
+flash-v2.5,S4,wer,"WER, expressive scripts with tags removed from reference",0.0,0.0,0.0,12,1
+flash-v2.5,S5,wer,"WER, 2,000-character passage",0.0,,,1,1
+flash-v2.5,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.06740571103998177,0.06346258611922892,0.07183141961442661,83,3
+flash-v2.5,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.5402587216541949,0.5152473144741903,0.5647719616392052,83,3
+flash-v2.5,S5,worst_chunk_wer,Highest per-chunk WER in the long passage (drift / skipped text),0.0,,,1,1
+flash-v2.5,ALL,credits_used,Estimated credits used,6569.0,,,83,3
 multi-v2,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
 multi-v2,S2,s2_pass,Normalization pass rate (higher is better),0.2,0.04,0.36,25,3
-multi-v2,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07388250043652742,0.06831149411965308,0.08008779908155506,55,3
-multi-v2,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",1.037714568051425,1.00048514528708,1.076675404021234,55,3
-multi-v2,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+multi-v2,S3,wer,"WER, homograph sentences (ASR cannot hear stress; see listening test)",0.014814814814814814,0.0,0.04444444444444444,15,3
+multi-v2,S4,wer,"WER, expressive scripts with tags removed from reference",0.0,0.0,0.0,12,1
+multi-v2,S5,wer,"WER, 2,000-character passage",0.006329113924050633,,,1,1
+multi-v2,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.0692215477182719,0.06519170320397712,0.0736402388442966,83,3
+multi-v2,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.9157231878564062,0.8650940328477378,0.9635654047550448,83,3
+multi-v2,S5,worst_chunk_wer,Highest per-chunk WER in the long passage (drift / skipped text),0.07407407407407407,,,1,1
+multi-v2,ALL,credits_used,Estimated credits used,13138.0,,,83,3
 v3,S1,wer,"WER, read-aloud (lower is better)",0.00625,0.0,0.018055555555555554,30,3
 v3,S2,s2_pass,Normalization pass rate (higher is better),0.5733333333333333,0.3999999999999999,0.7466666666666666,25,3
-v3,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07974577315089756,0.0718549631037452,0.08856066706639015,55,3
-v3,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.9593630501718231,0.9289935394850645,0.9914614738478804,55,3
-v3,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+v3,S3,wer,"WER, homograph sentences (ASR cannot hear stress; see listening test)",0.0,0.0,0.0,15,3
+v3,S4,wer,"WER, expressive scripts with tags removed from reference",0.0,0.0,0.0,12,1
+v3,S5,wer,"WER, 2,000-character passage",0.0,,,1,1
+v3,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.07226441571466653,0.06626996558480236,0.07890485479493337,83,3
+v3,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.8567795839654394,0.8171133195300658,0.8953671328753354,83,3
+v3,S5,worst_chunk_wer,Highest per-chunk WER in the long passage (drift / skipped text),0.0,,,1,1
+v3,ALL,credits_used,Estimated credits used,13249.0,,,83,3
 v4,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
 v4,S2,s2_pass,Normalization pass rate (higher is better),0.68,0.4933333333333333,0.8533333333333333,25,3
-v4,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08849700670782619,0.07985708996091427,0.09784441111877595,55,3
-v4,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",1.4234315236409507,1.3602199913154949,1.4890714329661747,55,3
-v4,ALL,credits_used,Estimated credits used,9237.0,,,55,3
+v4,S3,wer,"WER, homograph sentences (ASR cannot hear stress; see listening test)",0.0037037037037037034,0.0,0.01111111111111111,15,3
+v4,S4,wer,"WER, expressive scripts with tags removed from reference",0.0,0.0,0.0,12,1
+v4,S5,wer,"WER, 2,000-character passage",0.012658227848101266,,,1,1
+v4,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08127865151992393,0.07500937294506123,0.08815162855149897,83,3
+v4,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",1.2547361506036965,1.1884561746714106,1.325028101292001,83,3
+v4,S5,worst_chunk_wer,Highest per-chunk WER in the long passage (drift / skipped text),0.07407407407407407,,,1,1
+v4,ALL,credits_used,Estimated credits used,13249.0,,,83,3
 v4-turbo,S1,wer,"WER, read-aloud (lower is better)",0.0,0.0,0.0,30,3
 v4-turbo,S2,s2_pass,Normalization pass rate (higher is better),0.7199999999999999,0.5466666666666666,0.88,25,3
-v4-turbo,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08849082241592761,0.0798446084628719,0.09784410190418102,55,3
-v4-turbo,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.8284558715242327,0.7863600264173566,0.8740414094924925,55,3
-v4-turbo,ALL,credits_used,Estimated credits used,4618.5,,,55,3
+v4-turbo,S3,wer,"WER, homograph sentences (ASR cannot hear stress; see listening test)",0.020634920634920634,0.0,0.052380952380952375,15,3
+v4-turbo,S4,wer,"WER, expressive scripts with tags removed from reference",0.0,0.0,0.0,12,1
+v4-turbo,S5,wer,"WER, 2,000-character passage",0.015822784810126583,,,1,1
+v4-turbo,ALL,sec_per_char,Seconds of audio per character (speaking rate),0.08127455349517186,0.07500117689555709,0.0881476329773657,83,3
+v4-turbo,ALL,ttfa_s,"Time to first audio byte, seconds (streaming)",0.6959048619710777,0.6453352280649315,0.7457155579543975,83,3
+v4-turbo,S5,worst_chunk_wer,Highest per-chunk WER in the long passage (drift / skipped text),0.07407407407407407,,,1,1
+v4-turbo,ALL,credits_used,Estimated credits used,6624.5,,,83,3

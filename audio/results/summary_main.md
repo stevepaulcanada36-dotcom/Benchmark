@@ -1,34 +1,54 @@
 # audio-bench results (main)
 
-Generated 2026-11-21. ASR: faster-whisper large-v3, Whisper English normalizer. 95% CIs: cluster bootstrap over items, runs kept together.
+Generated 2026-11-24. ASR: faster-whisper large-v3, Whisper English normalizer. 95% CIs: cluster bootstrap over items, runs kept together.
 
 | Model | Suite | Metric | Estimate | 95% CI | Items x runs |
 |---|---|---|---|---|---|
-| flash-v2.5 | ALL | credits_used | 4,618 |  | 55 x 3 |
-| multi-v2 | ALL | credits_used | 9,237 |  | 55 x 3 |
-| v3 | ALL | credits_used | 9,237 |  | 55 x 3 |
-| v4 | ALL | credits_used | 9,237 |  | 55 x 3 |
-| v4-turbo | ALL | credits_used | 4,618 |  | 55 x 3 |
+| flash-v2.5 | ALL | credits_used | 6,569 |  | 83 x 3 |
+| multi-v2 | ALL | credits_used | 13,138 |  | 83 x 3 |
+| v3 | ALL | credits_used | 13,249 |  | 83 x 3 |
+| v4 | ALL | credits_used | 13,249 |  | 83 x 3 |
+| v4-turbo | ALL | credits_used | 6,624 |  | 83 x 3 |
 | flash-v2.5 | S2 | s2_pass | 16.0% | 4.0% - 32.0% | 25 x 3 |
 | multi-v2 | S2 | s2_pass | 20.0% | 4.0% - 36.0% | 25 x 3 |
 | v3 | S2 | s2_pass | 57.3% | 40.0% - 74.7% | 25 x 3 |
 | v4 | S2 | s2_pass | 68.0% | 49.3% - 85.3% | 25 x 3 |
 | v4-turbo | S2 | s2_pass | 72.0% | 54.7% - 88.0% | 25 x 3 |
-| flash-v2.5 | ALL | sec_per_char | 0.072 | 0.066 - 0.078 | 55 x 3 |
-| multi-v2 | ALL | sec_per_char | 0.074 | 0.068 - 0.080 | 55 x 3 |
-| v3 | ALL | sec_per_char | 0.080 | 0.072 - 0.089 | 55 x 3 |
-| v4 | ALL | sec_per_char | 0.088 | 0.080 - 0.098 | 55 x 3 |
-| v4-turbo | ALL | sec_per_char | 0.088 | 0.080 - 0.098 | 55 x 3 |
-| flash-v2.5 | ALL | ttfa_s | 0.600 | 0.578 - 0.625 | 55 x 3 |
-| multi-v2 | ALL | ttfa_s | 1.038 | 1.000 - 1.077 | 55 x 3 |
-| v3 | ALL | ttfa_s | 0.959 | 0.929 - 0.991 | 55 x 3 |
-| v4 | ALL | ttfa_s | 1.423 | 1.360 - 1.489 | 55 x 3 |
-| v4-turbo | ALL | ttfa_s | 0.828 | 0.786 - 0.874 | 55 x 3 |
+| flash-v2.5 | ALL | sec_per_char | 0.067 | 0.063 - 0.072 | 83 x 3 |
+| multi-v2 | ALL | sec_per_char | 0.069 | 0.065 - 0.074 | 83 x 3 |
+| v3 | ALL | sec_per_char | 0.072 | 0.066 - 0.079 | 83 x 3 |
+| v4 | ALL | sec_per_char | 0.081 | 0.075 - 0.088 | 83 x 3 |
+| v4-turbo | ALL | sec_per_char | 0.081 | 0.075 - 0.088 | 83 x 3 |
+| flash-v2.5 | ALL | ttfa_s | 0.540 | 0.515 - 0.565 | 83 x 3 |
+| multi-v2 | ALL | ttfa_s | 0.916 | 0.865 - 0.964 | 83 x 3 |
+| v3 | ALL | ttfa_s | 0.857 | 0.817 - 0.895 | 83 x 3 |
+| v4 | ALL | ttfa_s | 1.255 | 1.188 - 1.325 | 83 x 3 |
+| v4-turbo | ALL | ttfa_s | 0.696 | 0.645 - 0.746 | 83 x 3 |
 | flash-v2.5 | S1 | wer | 0.0% | 0.0% - 0.0% | 30 x 3 |
 | multi-v2 | S1 | wer | 0.0% | 0.0% - 0.0% | 30 x 3 |
 | v3 | S1 | wer | 0.6% | 0.0% - 1.8% | 30 x 3 |
 | v4 | S1 | wer | 0.0% | 0.0% - 0.0% | 30 x 3 |
 | v4-turbo | S1 | wer | 0.0% | 0.0% - 0.0% | 30 x 3 |
+| flash-v2.5 | S3 | wer | 0.0% | 0.0% - 0.0% | 15 x 3 |
+| multi-v2 | S3 | wer | 1.5% | 0.0% - 4.4% | 15 x 3 |
+| v3 | S3 | wer | 0.0% | 0.0% - 0.0% | 15 x 3 |
+| v4 | S3 | wer | 0.4% | 0.0% - 1.1% | 15 x 3 |
+| v4-turbo | S3 | wer | 2.1% | 0.0% - 5.2% | 15 x 3 |
+| flash-v2.5 | S4 | wer | 0.0% | 0.0% - 0.0% | 12 x 1 |
+| multi-v2 | S4 | wer | 0.0% | 0.0% - 0.0% | 12 x 1 |
+| v3 | S4 | wer | 0.0% | 0.0% - 0.0% | 12 x 1 |
+| v4 | S4 | wer | 0.0% | 0.0% - 0.0% | 12 x 1 |
+| v4-turbo | S4 | wer | 0.0% | 0.0% - 0.0% | 12 x 1 |
+| flash-v2.5 | S5 | wer | 0.0% |  | 1 x 1 |
+| multi-v2 | S5 | wer | 0.6% |  | 1 x 1 |
+| v3 | S5 | wer | 0.0% |  | 1 x 1 |
+| v4 | S5 | wer | 1.3% |  | 1 x 1 |
+| v4-turbo | S5 | wer | 1.6% |  | 1 x 1 |
+| flash-v2.5 | S5 | worst_chunk_wer | 0.0% |  | 1 x 1 |
+| multi-v2 | S5 | worst_chunk_wer | 7.4% |  | 1 x 1 |
+| v3 | S5 | worst_chunk_wer | 0.0% |  | 1 x 1 |
+| v4 | S5 | worst_chunk_wer | 7.4% |  | 1 x 1 |
+| v4-turbo | S5 | worst_chunk_wer | 7.4% |  | 1 x 1 |
 
 ## Pairwise S1 WER differences (paired bootstrap, Holm)
 
