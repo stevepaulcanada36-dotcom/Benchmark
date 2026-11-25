@@ -22,8 +22,13 @@ def run(tmp, *args):
 def test_pipeline(tmp_path):
     shutil.copy(HERE / "config.yaml", tmp_path / "config.yaml")
     assert "32 clips per model" in run(tmp_path, "plan")
+    assert "Copy prompt" in (tmp_path / "checklist.html").read_text(encoding="utf-8")
     run(tmp_path, "generate", "--yes")
     assert len(list((tmp_path / "clips").rglob("*.mp4"))) == 32
+    # the web-app path: re-import the same files as if downloaded by hand, without seeds
+    dl = tmp_path / "downloads"
+    shutil.copytree(tmp_path / "clips" / "veo-3.1-fast", dl)
+    assert "Imported 32" in run(tmp_path, "import", str(dl), "--model", "veo-3.1-fast", "--no-seed")
     run(tmp_path, "auto")
     auto = list(csv.DictReader(open(tmp_path / "results/auto.csv", encoding="utf-8")))
     sb1 = next(r for r in auto if r["cid"] == "SB1-1")
@@ -47,3 +52,4 @@ def test_pipeline(tmp_path):
     run(tmp_path, "report")
     s = (tmp_path / "results/summary.md").read_text(encoding="utf-8")
     assert "Across the three shots" in s and "Rater consistency" in s and "Spearman" in s
+    assert "seeds could not be set" in s

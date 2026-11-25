@@ -9,6 +9,7 @@ def main():
     ap.add_argument("folder", nargs="?", help="for import: folder of .mp4 files named as in prompts.csv")
     ap.add_argument("--model", help="for import: model name from config.yaml")
     ap.add_argument("--models", nargs="*", help="for generate: limit to these model names")
+    ap.add_argument("--no-seed", action="store_true", help="for import: the web app had no seed box")
     ap.add_argument("--yes", "-y", action="store_true")
     a = ap.parse_args()
     cfg = core.load_config()
@@ -19,7 +20,7 @@ def main():
     elif a.command == "import":
         if not a.folder or not a.model:
             raise SystemExit("Usage: python -m vgbench import <folder> --model <name from config.yaml>")
-        core.import_clips(cfg, a.folder, a.model)
+        core.import_clips(cfg, a.folder, a.model, a.no_seed)
     elif a.command == "auto":
         auto.run(cfg)
     elif a.command == "rate":

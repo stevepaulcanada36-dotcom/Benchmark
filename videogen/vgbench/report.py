@@ -10,7 +10,7 @@ from datetime import date
 import numpy as np
 import pandas as pd
 
-from .core import WORK
+from .core import WORK, seeds_set
 from .items import SB_BY_ID
 
 B = 2000
@@ -156,6 +156,10 @@ def report():
         for met in dict.fromkeys(d.metric):
             L.append(f"| {met} | " + " | ".join(cell(d[(d.metric == met) & (d.model == m)].iloc[0]) for m in models) + " |")
         L.append("")
+    noseed = [m for m in models if not seeds_set(m)]
+    if noseed:
+        L += [f"Note: seeds could not be set for {', '.join(noseed)} (clips made in the web app), so for "
+              "that model the 'same seed' pair is just a second try with the same prompt, like the 'new seed' pair.", ""]
     L += ["## Storyboards, by hackathon judging criterion", "", "| Storyboard | Serves | Demo-usable shots | Cross-shot character |",
           "|---|---|---|---|"]
     for sid, sb in SB_BY_ID.items():

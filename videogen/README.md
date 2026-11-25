@@ -57,7 +57,8 @@ together), as in the other benchmarks.
 ```powershell
 python -m vgbench plan                     # writes prompts.csv: 32 prompts with file names and seeds
 python -m vgbench generate                 # through the API: needs the ElevenLabs Pro plan; resumes; spending guard in config.yaml
-#   or, without Pro: make each clip in the ElevenLabs web app from prompts.csv, save it as its file_name, then
+#   or, without Pro: open checklist.html (written by plan), make each clip in the ElevenLabs web app with its
+#   Copy prompt / Copy file name buttons, tick it off, then import (add --no-seed if the web app has no seed box)
 python -m vgbench import C:\path\to\downloads --model veo-3.1-fast
 python -m vgbench auto                     # automatic measures, free
 python -m vgbench rate                     # builds rating/index.html: open it, rate, Download the CSV into ratings/
