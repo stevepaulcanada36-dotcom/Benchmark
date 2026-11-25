@@ -76,8 +76,10 @@ def run_one(exe, cfg, model, item, scaffold):
         cmd = [exe, "run", "--model", full] + (["--auto"] if scaffold.get("auto") else []) + [build_prompt(item, scaffold)]
         t0 = time.time()
         try:
-            p = subprocess.run(cmd, cwd=work, capture_output=True, text=True, encoding="utf-8", errors="replace",
-                               timeout=c["timeout_s"], stdin=subprocess.DEVNULL)
+            # PWD must point at the temp folder too: opencode trusts an inherited PWD (set by Git Bash) over the real
+            # working folder, and without this the agent ran in the folder the benchmark was started from.
+            p = subprocess.run(cmd, cwd=work, env=dict(os.environ, PWD=str(work)), capture_output=True, text=True,
+                               encoding="utf-8", errors="replace", timeout=c["timeout_s"], stdin=subprocess.DEVNULL)
             out, err, rc = ANSI.sub("", p.stdout), ANSI.sub("", p.stderr), p.returncode
         except subprocess.TimeoutExpired:
             out, err, rc = "", f"timeout after {c['timeout_s']}s", 124
