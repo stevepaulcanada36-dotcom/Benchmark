@@ -22,3 +22,5 @@ listen/ledger.jsonl
 video/clips/
 video/outputs/
 videogen/probe/*.mp4
+videogen/clips/
+videogen/rating/v/

@@ -1,0 +1,21 @@
+# VideoGenBench: is AI-generated video consistent enough for a short game demo?
+seed: 2453
+
+# Models to compare. Request fields are the ones the ElevenLabs video API accepted in cost_probe.py.
+# The API needs the ElevenLabs Pro plan (it answered HTTP 402 "paid_plan_required" on a lower plan).
+# Without Pro, make the clips by hand in the ElevenLabs web app and use `python -m vgbench import`.
+models:
+  - {name: veo-3.1-fast, model_id: veo-3.1-fast-generate-001}
+  # Add more models from the ElevenLabs video page here, e.g. {name: other, model_id: <id shown by ElevenLabs>}
+
+duration_secs: 4
+resolution: 720p
+aspect_ratio: "16:9"
+generate_audio: true
+
+# Spending guard for `generate`: stop before the account's measured video usage passes this many credits.
+max_credits: 60000
+# Clips per model: 6 storyboards x (3 shots + same-seed repeat + new-seed repeat) + 2 control = 32.
+
+# Rating
+repeat_share: 0.15        # share of clips shown a second time, hidden, to measure the rater's own consistency
