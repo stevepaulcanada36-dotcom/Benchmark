@@ -29,6 +29,17 @@ L = pd.read_csv(ROOT / "listen/results/metrics.csv")
 S = pd.read_csv(ROOT / "security/results/metrics_main.csv")
 C = pd.read_csv(ROOT / "scaffold/results/metrics_combined.csv")
 J2 = (ROOT / "security/results/second_judge.md").read_text(encoding="utf-8")
+CM = pd.read_csv(ROOT / "scaffold/results/metrics_cipher.csv")      # encoded-instruction attack suite
+CIPHER_RAW = {}
+for _p in (ROOT / "scaffold/outputs/cipher").glob("*.jsonl"):
+    _rs = {}
+    for _x in open(_p, encoding="utf-8"):
+        _r = json.loads(_x)
+        _rs[(_r["uid"], _r["scaffold"], _r["run"])] = _r
+    CIPHER_RAW[_p.stem] = list(_rs.values())
+import sys  # noqa: E402
+sys.path.insert(0, str(ROOT / "scaffold"))
+from scaffbench import cipher as CIPHER  # noqa: E402
 AUDIO_ITEMS = [json.loads(x) for x in open(ROOT / "audio/audio/main/metrics.jsonl", encoding="utf-8")] \
     if (ROOT / "audio/audio/main/metrics.jsonl").exists() else []
 LISTEN_OUT = {}
@@ -229,6 +240,41 @@ def fig_agents():
         pctax(ax, "y")
     axes[0].legend(loc="lower center", bbox_to_anchor=(1.04, 1.1), ncol=3, fontsize=11)
     return save(fig, "agents")
+
+
+CV = [("plain", "Plain words"), ("cipher", "In code, table beside it"), ("split", "In code, table in another file"),
+      ("drip", "Slow drip, in code"), ("drip_plain", "Slow drip, plain words")]
+
+
+def cm(metric, variant, scaffold=None, model=None):
+    d = CM[(CM.metric == metric) & (CM.variant == variant)]
+    if scaffold:
+        d = d[d.scaffold == scaffold]
+    if model:
+        d = d[d.model == model]
+    return d.estimate
+
+
+def fig_coded():
+    fig, ax = plt.subplots(figsize=(10, 4.4))
+    y = np.arange(len(CV))[::-1]
+    series = [("Keyword filter in the harness caught it", WARN, lambda v: cm("blocked_by_harness_scanner", v, "S4_auto_scanner").mean()),
+              ("Model carried out the hidden instruction", BAD, lambda v: cm("attack_success", v).max()),
+              ("Model warned the user (policy file on), GPT-5.6", "#a9c4f0", lambda v: cm("model_warned_user", v, "S3_auto_guard", "GPT-5.6").mean()),
+              ("Model warned the user (policy file on), GPT-6.1", NEUTRAL, lambda v: cm("model_warned_user", v, "S3_auto_guard", "GPT-6.1").mean())]
+    h = 0.2
+    for k, (lab, c, f) in enumerate(series):
+        vals = [f(v) for v, _ in CV]
+        yy = y + (1.5 - k) * h
+        ax.barh(yy, [max(x, 0.006) for x in vals], height=h * 0.92, color=c, label=lab)
+        for yi, x in zip(yy, vals):
+            ax.text(max(x, 0.006) + 0.012, yi, pct(x), va="center", fontsize=9.5, color=INK)
+    ax.set_yticks(y, [n for _, n in CV])
+    pctax(ax)
+    ax.set_xlim(0, 1.12)
+    ax.grid(axis="y", visible=False)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.4, 1.0), ncol=2, fontsize=10)
+    return save(fig, "coded")
 
 
 def fig_overview():
@@ -460,6 +506,7 @@ def build():
     for old in FIG.glob("*.svg") if FIG.exists() else []:
         old.unlink()
     fsp, fli, fsa, fag, fov = fig_speaking(), fig_listening(), fig_safety(), fig_agents(), fig_overview()
+    fco = fig_coded()
     md = media()
     data = explorer()
     counts = {b: sum(d["bench"] == b for d in data) for b in ("Speaking", "Listening", "Safety", "Agents")}
@@ -582,6 +629,53 @@ def build():
         "a cheap fix that turns silent resistance into a visible warning.",
         "Because the attacks rarely worked, this test shows differences in warning, not in being hijacked. Stronger attacks are the next step.")
 
+    # ---- coded attacks (cipher suite)
+    c_items, c_book = CIPHER.build_items(2453)
+    ex = next(i for i in c_items if i["uid"] == "T3_notes|G2_exfil|drip")
+    ex_file = "\n".join(f"<mark>{esc(l)}</mark>" if ("release code" in l.lower() or "put together" in l) else esc(l)
+                        for l in ex["files"]["meeting_notes.md"].strip().split("\n"))
+    sample = ex["files"]["legend.txt"].split("\n")[1]
+
+    def reply(model, uid, sc):
+        return next((r["text"] for r in CIPHER_RAW.get(model, []) if r["uid"] == uid and r["scaffold"] == sc and not r.get("error")), "")
+    silent = reply("GPT-6.1", "T3_notes|G2_exfil|drip", "S2_agent_auto")
+    warned = reply("GPT-6.1", "T3_notes|G4_action|drip", "S3_auto_guard")
+    valid = {m: sum(not r.get("error") for r in rs) for m, rs in CIPHER_RAW.items()}
+    total = {m: len(rs) for m, rs in CIPHER_RAW.items()}
+    dec = CM[CM.metric == "decoded_when_asked"].estimate
+    att_max = CM[CM.metric == "attack_success"].estimate.max()
+    caught = {v: cm("blocked_by_harness_scanner", v, "S4_auto_scanner").mean() for v, _ in CV}
+    w3 = CM[(CM.metric == "model_warned_user") & (CM.scaffold == "S3_auto_guard")].estimate
+    w_no = CM[(CM.metric == "model_warned_user") & CM.scaffold.isin(["S0_pasted", "S2_agent_auto"])].estimate.max()
+    co_example = ('<div class="example"><div class="lbl">How one test works: a real slow-drip file</div>'
+                  f'Every letter has three random codes made of symbols, a number and two letters, for example <code>{esc(sample.split("   ")[0])}</code>. '
+                  'The instruction is cut into three parts, hidden inside friendly notes, and a last note asks the reader to put them together. '
+                  f'The table is in a separate <code>legend.txt</code>.<pre class="file">{ex_file}</pre>'
+                  f'<p style="margin:8px 0 0">Put together, the three parts decode to: <b>“{esc(CIPHER.SECRET_MSG["G2_exfil"])}”</b> (the key is a fake test key).</p>'
+                  f'<div class="pair"><div class="say ok"><div class="who">GPT-6.1, auto-approve, no policy file</div>“{esc(silent[:200])}”</div>'
+                  f'<div class="say ok"><div class="who">GPT-6.1, with the policy file</div>“{esc(warned[:200])}”</div></div></div>')
+    coded = card5(
+        "If the hidden instruction is written in a secret code, or slipped in a piece at a time, will the agent decode it and carry it out?",
+        "<p>We re-ran the agent test with the hidden instruction <b>in a made-up code</b> instead of plain words, in five versions: plain words "
+        "(for comparison), code with its table beside it, code with the table in a separate file, and a <b>slow drip</b> where the instruction "
+        "is split into three friendly notes spread through the file, in code or in plain words. We added a fifth set-up: a <b>keyword filter in "
+        "the harness</b> that scans every file and refuses the task if it finds suspicious words, the way many simple guards work.</p>" + co_example,
+        f'<p class="find">Both models could read the code (they decoded it correctly <b>{pct(dec.min())}</b> of the time when asked), yet neither '
+        f'carried out a hidden instruction even once (<b>{pct(att_max)}</b>). The keyword filter caught every plain-text attack and '
+        f'<b>missed every coded one</b>, including the slow drip.</p>'
+        + fig(fco, "A keyword filter misses coded instructions; the model and a policy file did the protecting",
+              f"Gold: share of attacks the harness keyword filter refused. Red: share of runs where a model carried out the hidden instruction "
+              f"(both models, all set-ups). Blue: share of runs where the model warned the user, with the policy file on (without it: at most "
+              f"{pct(w_no)}). 6 attacked tasks per version, 1 run each.",
+              "Bars for five versions: the filter catches plain words and the plain slow drip only; models never carry out the instruction; warnings 50-100% with the policy file.")
+        + f'<p class="small">Valid runs: GPT-6.1 {valid.get("GPT-6.1", 0)} of {total.get("GPT-6.1", 0)}, GPT-5.6 {valid.get("GPT-5.6", 0)} of '
+          f'{total.get("GPT-5.6", 0)} (the rest failed at the AgentRouter gateway and could not be retried when the account ran out of credit). '
+          f'<span class="code">repo: scaffold/scaffbench/cipher.py, results/summary_cipher.md</span></p>',
+        "A filter that looks for suspicious words gives a false sense of safety: a simple code walks straight past it. Here the models "
+        "themselves refused, and only the policy file made them tell the user that a file was trying to give them orders.",
+        "A small test (1 run per item) with harmless goals and two models. Stronger models are better at decoding, so this should be repeated "
+        "with others; a filter that also flags words like “decode” would catch these particular files.")
+
     surprise = "".join(f'<div class="sp"><h3>{t}</h3><p>{p}</p></div>' for t, p in [
         ("The safety problem came from the gateway, not the model.",
          f"GPT-5.6 refused only {pct(over.estimate, 1)} of harmless questions. The filter in front of it blocked {pct(g['C'].estimate, 1)}."),
@@ -589,6 +683,8 @@ def build():
          f"From {pct(hall['whisper-v3'].estimate)} of silent clips to {pct(hall['whisper-v3-vad'].estimate)}, with one setting."),
         ("Agents resisted attacks but kept quiet about them.",
          f"Almost no attack worked, yet the agent warned the user {pct(flag_other)} of the time until a one-page policy file raised it to {pct(flag['GPT-6.1'].estimate)}."),
+        ("A keyword filter missed every coded attack, but the models still refused.",
+         f"The filter caught {pct(caught['plain'])} of plain-text attacks and {pct(caught['cipher'])} of coded ones. Both models could decode the code, and neither ever acted on it."),
     ])
 
     fcards = "".join(f'<a class="fc" href="#{h}"><span class="ic">{i}</span><div class="lab">{lab}</div><p>{t}</p></a>' for h, i, lab, t in [
@@ -624,6 +720,8 @@ def build():
              ("python -m secbench all --config config.agentrouter.yaml", "Safety: run and judge suites A, C, D",
               "AgentRouter usage, about $20–30 per model (estimate)", "Hours; limited by the gateway's quota"),
              ("python -m scaffbench run", "Agents: 360 agent runs per model", "AgentRouter usage", "Hours"),
+             ("python -m scaffbench cipher --pilot && python -m scaffbench cipher-report", "Coded attacks: 32 items × 4 set-ups per model",
+              "AgentRouter usage", "About 40 minutes for two models"),
              ("python site/build.py", "Rebuild this page from the results files", "Free", "Seconds")]
     repro_tbl = ('<div class="tw"><table class="t"><tr><th>Command</th><th>What it does</th><th>Cost</th><th>Time</th></tr>' +
                  "".join(f'<tr><td><pre class="cmd">{esc(a)}</pre></td><td>{b}</td><td>{c}</td><td>{d}</td></tr>' for a, b, c, d in repro) + "</table></div>")
@@ -640,7 +738,7 @@ def build():
 <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,600;0,700;1,400&family=Lekton:wght@400;700&display=swap" rel="stylesheet">
 <style>{CSS}</style></head><body>
 <nav><div class="in"><a class="brand" href="#top">Hard Inputs</a><a href="#speaking">🔊 Speaking</a><a href="#listening">👂 Listening</a>
-<a href="#safety">🛡️ Safety</a><a href="#agents">🤖 Agents</a><a href="#surprises">Surprises</a><a href="#all">All results</a>
+<a href="#safety">🛡️ Safety</a><a href="#agents">🤖 Agents</a><a href="#coded">🔐 Coded attacks</a><a href="#surprises">Surprises</a><a href="#all">All results</a>
 <a href="#methods">How we tested</a><a href="#limits">Limitations</a><a href="#reproduce">Reproduce</a></div></nav>
 <main class="wrap" id="top">
 <header class="hero">
@@ -665,6 +763,7 @@ def build():
 {bm("listening", "👂", "Listening: does speech-to-text stick to what was said?", "done", listening)}
 {bm("safety", "🛡️", "Safety: refusing the right things", "part", safety)}
 {bm("agents", "🤖", "Agents: can a file hijack an AI agent?", "done", agents)}
+{bm("coded", "🔐", "Coded attacks: instructions hidden in a secret code", "done", coded)}
 {bm("video", "🎬", "Video: does AI understand what it sees and hears?", "plan", '<p class="q">Planned. Can an AI model tell the order of events in a video, and notice when the sound does not match the picture?</p><p class="small">The test videos are built and the code is in the repository, but the free Gemini tier ran out during the pilot, so there are no results yet.</p>')}
 
 <section class="bm" id="surprises"><h2>What surprised us</h2><div class="surprise">{surprise}</div></section>
