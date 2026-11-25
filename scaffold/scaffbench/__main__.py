@@ -5,17 +5,18 @@
   python -m scaffbench run --pilot             # ~8 items x all scaffolds x 1 run
   python -m scaffbench run                     # full run (resumes; never repeats finished runs)
   python -m scaffbench report [--pilot]        # results/summary_*.md, CSVs, plot
+  python -m scaffbench cipher [--pilot]        # encoded-instruction attack suite, then: cipher-report
 """
 import argparse
 import subprocess
 
-from . import report, run
+from . import cipher, report, run
 from .tasks import build_items
 
 
 def main():
     ap = argparse.ArgumentParser(prog="scaffbench", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["show", "check", "run", "report"])
+    ap.add_argument("command", choices=["show", "check", "run", "report", "cipher", "cipher-report"])
     ap.add_argument("--pilot", action="store_true")
     ap.add_argument("--models", nargs="*", help="labels from config.yaml")
     ap.add_argument("--scaffolds", nargs="*", help="names from config.yaml, e.g. S0_pasted S3_auto_guard")
@@ -47,6 +48,10 @@ def main():
         run.run(cfg, models, scaffolds, a.pilot, a.yes)
     elif a.command == "report":
         report.write(cfg, a.pilot)
+    elif a.command == "cipher":         # encoded-instruction attack suite (see cipher.py)
+        cipher.run_suite(cfg, models, a.yes, runs=1 if a.pilot else 2)
+    elif a.command == "cipher-report":
+        cipher.report(cfg)
 
 
 if __name__ == "__main__":
